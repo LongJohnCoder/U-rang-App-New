@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "348104988140",
+    "project_id": "u-rang"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348104988140:android:676a56d685a754b5",
+        "android_client_info": {
+          "package_name": "us.tier5.u_rang"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "348104988140-i6rsi29fdsee0e4j869o44glqk789ecf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "us.tier5.u_rang",
+            "certificate_hash": "62CE51CDD6DE2894CC58C2443F25F6347DE8700E"
+          }
+        },
+        {
+          "client_id": "348104988140-sjehgej1kdfvj7mkl8f046f9pj75ps73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSiqdnUAlePmrqNGtAaX-xrTLLf2JPpMs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

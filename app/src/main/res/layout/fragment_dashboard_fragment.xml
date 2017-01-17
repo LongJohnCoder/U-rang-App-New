@@ -1,0 +1,108 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="FragmentClasses.Dashboard_fragment">
+
+    <!--<com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="39dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/LLUpperImage">
+
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:id="@+id/imageView6"
+                android:src="@drawable/ic_service_4" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/app_theme_color">
+
+            </View>
+
+        </LinearLayout>
+
+        <!---->
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/llTrackStatus">
+
+
+
+        </LinearLayout>
+
+
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="116dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:id="@+id/RLsubmitSchedule"
+            android:layout_above="@+id/submitSchedule">
+
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/fastPickUp"
+                android:src="@drawable/fast_pickup"
+                android:layout_marginEnd="178dp"
+                android:layout_alignParentTop="true"
+                />
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/detailedPickUp"
+                android:src="@drawable/detail_pickup"
+                android:layout_marginLeft="167dp"
+                 />
+        </RelativeLayout>
+
+    </LinearLayout>
+    </ScrollView>
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/submitSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/app_theme_color"
+        android:text="@string/schedule_pick_up"
+        android:textSize="12sp"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
+
+</RelativeLayout>

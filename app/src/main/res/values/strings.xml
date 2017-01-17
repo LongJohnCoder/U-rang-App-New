@@ -1,0 +1,109 @@
+<resources>
+    <string name="app_name">U-rang</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_carousel_view">CarouselView</string>
+    <string name="schedule_pick_up">SCHEDULE PICK UP</string>
+
+    <string name="facebook_app_id">129607474149096</string>
+
+    <string-array name="month_array">
+        <item>Select Month</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+        <item>Select Month</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+        <item>  </item>
+    </string-array>
+
+    <string name="country_prompt">Select Your Favourite Schools</string>
+    <string name="title_activity_orders">Orders</string>
+    <string name="title_activity_dashboard_new">DashboardNew</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="action_example">Example action</string>
+    <string name="title_activity_order_details">Schedule</string>
+    <string name="title_activity_add_address">Add Address</string>
+    <string name="title_activity_other_details">Order Details</string>
+    <string name="title_activity_pick_up_optional">Optional Settings</string>
+
+    <string-array name="schedule_array">
+        <item>Select</item>
+        <item>For the time specified only.</item>
+        <item>Daily at this time except weekends.</item>
+        <item>Daily at this time including weekends.</item>
+        <item>Weekly on this day of the week.</item>
+        <item>Monthly on this day of the month.</item>
+    </string-array>
+
+    <string-array name="starch_type">
+        <item>Select</item>
+        <item>Very Light Starch</item>
+        <item>Light Starch</item>
+        <item>Medium Starch</item>
+        <item>Heavy Starch</item>
+    </string-array>
+    <string-array name="payment_type">
+        <item>Select</item>
+        <item>Charge my credit card</item>
+        <item>Check</item>
+    </string-array>
+
+    <string-array name="clint_type">
+        <item>Select</item>
+        <item>New Clint</item>
+        <item>key Clint</item>
+        <item>Referral</item>
+    </string-array>
+
+    <string-array name="card_type">
+        <item>Select Card</item>
+        <item>Visa</item>
+        <item>Master Card</item>
+        <item>American Express</item>
+    </string-array>
+
+    <string-array name="box_or_hung">
+        <item>Select</item>
+        <item>Boxed</item>
+        <item>Hung</item>
+    </string-array>
+
+    <string name="title_activity_detailed_pickup">Add Items</string>
+    <string name="title_activity_forgot_password">Forgot Password</string>
+    <string name="enter_address_here">Enter Address Here</string>
+    <string name="registered_address">Registered Address</string>
+    <string name="maiil_email_com">maiil@email.com</string>
+    <string name="email">Email</string>
+    <string name="enter_number_here">Enter Number Here</string>
+</resources>

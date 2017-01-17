@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_pick_up_optional"
+    tools:context="us.tier5.u_rang.PickUpOptional">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="52.5dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#dad8d8"
+                android:gravity="bottom"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:paddingTop="12dp">
+
+                <!--****isEmergency TEXT****-->
+
+
+                <!--****boxed_or_hung TEXT****-->
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="BOX OR HUNG"
+                        android:textColor="@color/app_theme_color" />
+                    <TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Boxed"
+                        android:id="@+id/tvboxed_or_hung"
+                        android:textColor="@color/app_theme_color_secondary" />
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:id="@+id/swboxed_or_hung"
+                        android:layout_below="@+id/logo"
+                        android:layout_centerHorizontal="true"
+                        android:elevation="0dp"
+                        android:layout_marginRight="16dp"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_weight="2.5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="BOX OR HUNG"
+                            android:textColor="@color/app_theme_color" />
+                    </LinearLayout>
+
+
+                    <!--<TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Boxed"
+                        android:id="@+id/tvboxed_or_hung"
+                        android:textColor="@color/app_theme_color_secondary" />-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#ffffff">
+
+                        <Spinner
+                            android:id="@+id/boxOrHungSpinner"
+                            android:padding="7dp"
+                            android:layout_width="match_parent"
+                            android:textColorHint="#333333"
+                            android:entries="@array/box_or_hung"
+                            android:layout_height="33.5dp"
+                            android:background="#00000000"
+                            />
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+
+
+
+                <!--****STARCH TEXT****-->
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="STARCH TYPE"
+                        android:textColor="@color/app_theme_color" />
+
+                </LinearLayout>
+
+
+                <!--**** STARCH TEXT****-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginRight="16dp"
+                        android:background="#fff">
+
+                        <Spinner
+                            android:id="@+id/strach_type"
+                            android:padding="7dp"
+                            android:layout_width="match_parent"
+                            android:textColorHint="#333333"
+                            android:entries="@array/starch_type"
+                            android:layout_height="33.5dp"
+                            android:background="#00000000"
+                            />
+
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!--****U-RANG BAG TEXT****-->
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NEED U-RANG BAG"
+                        android:textColor="@color/app_theme_color"
+                        />
+                    <TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="yes"
+                        android:id="@+id/tvUrang_bag"
+                        android:textColor="@color/app_theme_color_secondary" />
+
+                    <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:id="@+id/swUrang_bag"
+                        android:layout_below="@+id/logo"
+                        android:layout_centerHorizontal="true"
+                        android:elevation="0dp"
+                        android:layout_marginRight="16dp"
+                        />
+
+                </LinearLayout>
+
+
+                <!--**** U-RANG BAG TEXT****-->
+
+
+
+
+                <!--****SPICIAL TEXT****-->
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="SPICIAL INSTRUCTION"
+                        android:textColor="@color/app_theme_color" />
+
+                </LinearLayout>
+
+
+                <!--****SPICIAL TEXT****-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginRight="16dp"
+                        android:background="#fff">
+
+                        <EditText
+                            android:id="@+id/etSpecialInstruction"
+                            android:padding="7dp"
+                            android:layout_width="match_parent"
+                            android:textColorHint="#333333"
+                            android:maxLines="1"
+                            android:layout_height="33.5dp"
+                            android:background="#00000000"
+                            />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <!--****DRIVING TEXT****-->
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="DRIVING INSTRUCTION"
+                        android:textColor="@color/app_theme_color" />
+
+                </LinearLayout>
+
+
+                <!--****DRIVING TEXT****-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginRight="16dp"
+                        android:background="#fff">
+
+                        <EditText
+                            android:id="@+id/etDrivingInstruction"
+                            android:padding="7dp"
+                            android:layout_width="match_parent"
+                            android:textColorHint="#333333"
+                            android:maxLines="1"
+                            android:layout_height="33.5dp"
+                            android:background="#00000000"
+                            />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+
+
+
+                <!--****wash_n_fold TEXT****-->
+
+
+                <!--****isEmergency TEXT****-->
+
+
+
+                <!--****client_type TEXT****-->
+
+
+                <!--<LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:layout_weight="2.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="WHAT TYPE OF CLINT YOU ARE? *"
+                        android:textColor="@color/app_theme_color" />
+
+                </LinearLayout>
+
+
+                &lt;!&ndash;****client_type TEXT****&ndash;&gt;
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_marginRight="16dp"
+                        android:background="#fff">
+
+                        <Spinner
+                            android:id="@+id/client_type"
+                            android:padding="7dp"
+                            android:layout_width="match_parent"
+                            android:textColorHint="#333333"
+                            android:entries="@array/clint_type"
+                            android:layout_height="33.5dp"
+                            android:background="#00000000"
+                            />
+
+
+
+
+                    </LinearLayout>
+
+                </LinearLayout>-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+
+    </ScrollView>
+
+
+
+    <!--****PAY****-->
+    <TextView
+        android:id="@+id/submitScheduleOptional"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/app_theme_color"
+        android:text="SCHEDULE PICK UP"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>
