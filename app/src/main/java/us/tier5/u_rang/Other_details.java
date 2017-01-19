@@ -580,6 +580,7 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                 {
                     if(cardDetailsareThere)
                     {
+                        Log.i("kingsukmajumder",SaveUserData.data_total.toString());
                         loadingPostingOrder = ProgressDialog.show(Other_details.this, "","Placing order", true, false);
                         registerUser.register(SaveUserData.data_total,route);
                     }
