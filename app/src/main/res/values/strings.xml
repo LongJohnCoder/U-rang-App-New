@@ -76,7 +76,7 @@
     <string-array name="payment_type">
         <item>Select</item>
         <item>Charge my credit card</item>
-        <!--<item>Check</item>-->
+        <item>Check</item>
     </string-array>
 
     <string-array name="clint_type">

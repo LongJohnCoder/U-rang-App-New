@@ -198,6 +198,7 @@
             android:layout_height="match_parent"
             android:background="#626562"
             android:padding="16dp"
+            android:text="+1"
             android:hint="Mobile Number"
             android:textColorHint="#fff"
             android:textSize="14dp"

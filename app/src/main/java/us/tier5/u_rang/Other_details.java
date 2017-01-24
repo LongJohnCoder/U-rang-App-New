@@ -611,6 +611,7 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
     @Override
     public void processFinish(String output) {
         Log.i("kingsukmajumder",output);
+        //Toast.makeText(this, ""+output, Toast.LENGTH_SHORT).show();
         loadingPostingOrder.dismiss();
         try
         {
@@ -634,6 +635,7 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         {
             Log.i("kingsukmajumder",e.toString());
         }
+
     }
 
     @Override

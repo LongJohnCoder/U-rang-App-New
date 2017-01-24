@@ -15,8 +15,8 @@ android {
         applicationId "us.tier5.u_rang"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 8
-        versionName "1.8"
+        versionCode 9
+        versionName "1.9"
     }
     buildTypes {
         release {

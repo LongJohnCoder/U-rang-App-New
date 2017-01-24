@@ -1,6 +1,8 @@
 package us.tier5.u_rang;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -11,10 +13,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,10 +50,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import HelperClasses.AsyncResponse;
+import HelperClasses.AsyncResponseSms;
+import HelperClasses.AsyncSmsTracker;
 import HelperClasses.CheckNetwork;
+import HelperClasses.RegisterSms;
 import HelperClasses.RegisterUser;
 
-public class LoginActivity extends AppCompatActivity implements AsyncResponse.Response,View.OnClickListener,GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends AppCompatActivity implements AsyncResponse.Response,View.OnClickListener,GoogleApiClient.OnConnectionFailedListener, AsyncResponseSms.ResponseSms {
     TextView signUp;
     Button siginInButton;
     HashMap<String, String> data = new HashMap<String,String>();
@@ -83,6 +90,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
     Animation slideInRight;
     Animation slideInLeft;
     Animation pushUpIn;
+
+    TextView edt;
+    String smsVerificationCode="";
+
+    RegisterSms registerSms = new RegisterSms("POST");
+    HashMap<String,String> dataSms = new HashMap<>();
+    String routeSms = "https://www.textinbulk.com/app/api/send/ND";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +149,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
 
 
         registerUser.delegate = this;
+        registerSms.delegate = this;
 
         email = (TextView) findViewById(R.id.email);
         pass = (TextView) findViewById(R.id.pass);
@@ -313,11 +328,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             data.put("social_id",acct.getId());
             data.put("social_network_name","google");
 
-            mGifLoadingView = new GifLoadingView();
+            createSmsPopup();
+
+            /*mGifLoadingView = new GifLoadingView();
             mGifLoadingView.setImageResource(R.drawable.loading_3);
             mGifLoadingView.show(getFragmentManager(), "Loading");
             mGifLoadingView.setBlurredActionBar(true);
-            registerUser.register(data,socialLoginRoute);
+            registerUser.register(data,socialLoginRoute);*/
 
         } else {
                 Toast.makeText(getApplicationContext(),"Problem occured in google sign in",Toast.LENGTH_SHORT).show();
@@ -401,11 +418,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             data.put("social_id",social_id);
             data.put("social_network_name",social_network_name);
 
-            mGifLoadingView = new GifLoadingView();
+            createSmsPopup();
+
+            /*mGifLoadingView = new GifLoadingView();
             mGifLoadingView.setImageResource(R.drawable.loading_3);
             mGifLoadingView.show(getFragmentManager(), "Loading");
             mGifLoadingView.setBlurredActionBar(true);
-            registerUser.register(data,socialLoginRoute);
+            registerUser.register(data,socialLoginRoute);*/
         }
         catch (Exception e)
         {
@@ -436,5 +455,105 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
     protected void onRestart() {
         super.onRestart();
         showPageLoadAnimations();
+    }
+
+    public void createSmsPopup()
+    {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.popupphoneno, null);
+        dialogBuilder.setView(dialogView);
+
+        edt = (EditText) dialogView.findViewById(R.id.etCoupone);
+        edt.setText("+1");
+
+        // edt.setText(String.valueOf((int)(Math.random()*9000)+1000));
+
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.setTitle("Enter Phone No:");
+        dialogBuilder.setMessage("Please keep your country code too.");
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //do something with edt.getText().toString();
+                if(edt.getText().toString().equals(""))
+                {
+                    Toast.makeText(getApplicationContext(),"You need to enter a the message code",Toast.LENGTH_SHORT).show();
+
+                }
+                else
+                {
+
+                    if(!edt.getText().toString().equals(""))
+                    {
+                        data.put("personal_phone",edt.getText().toString());
+                        smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
+                        dataSms.put("to",edt.getText().toString());
+                        dataSms.put("body",smsVerificationCode);
+                        registerSms.register(dataSms,routeSms);
+                        createSmsPopupForOtp();
+                    }
+                    else
+                    {
+                        Toast.makeText(LoginActivity.this, "Please Enter a phone no!", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+            }
+        });
+
+        AlertDialog b = dialogBuilder.create();
+        b.show();
+    }
+
+    @Override
+    public void processFinishSms(String output) {
+        Log.i("kingsukmajumder",output);
+    }
+
+    public void createSmsPopupForOtp()
+    {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.popupphoneno, null);
+        dialogBuilder.setView(dialogView);
+
+        edt = (EditText) dialogView.findViewById(R.id.etCoupone);
+
+        // edt.setText(String.valueOf((int)(Math.random()*9000)+1000));
+
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.setTitle("Enter sms verification code:");
+        dialogBuilder.setMessage("Please wait for sometime to receive it in your phone.");
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //do something with edt.getText().toString();
+                if(edt.getText().toString().equals(""))
+                {
+                    Toast.makeText(getApplicationContext(),"You need to enter a the message code",Toast.LENGTH_SHORT).show();
+
+                }
+                else
+                {
+                    if(smsVerificationCode.equals(edt.getText().toString()))
+                    {
+                        mGifLoadingView = new GifLoadingView();
+                        mGifLoadingView.setImageResource(R.drawable.loading_3);
+                        mGifLoadingView.show(getFragmentManager(), "Loading");
+                        mGifLoadingView.setBlurredActionBar(true);
+                        registerUser.register(data,socialLoginRoute);
+                    }
+                    else
+                    {
+                        Toast.makeText(LoginActivity.this, "Verification code did'nt matched!", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+            }
+        });
+
+        AlertDialog b = dialogBuilder.create();
+        b.show();
     }
 }
