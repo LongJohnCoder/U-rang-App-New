@@ -51,7 +51,7 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         registerUser.delegate = this;
 
