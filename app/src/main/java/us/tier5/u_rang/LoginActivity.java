@@ -487,6 +487,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
                     {
                         data.put("personal_phone",edt.getText().toString());
                         smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
+                        Log.i("kingsukmajumder","sms verification code is "+smsVerificationCode);
                         dataSms.put("to",edt.getText().toString());
                         dataSms.put("body",smsVerificationCode);
                         registerSms.register(dataSms,routeSms);

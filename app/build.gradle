@@ -15,8 +15,8 @@ android {
         applicationId "us.tier5.u_rang"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 9
-        versionName "1.9"
+        versionCode 11
+        versionName "2.1"
     }
     buildTypes {
         release {
@@ -40,6 +40,7 @@ dependencies {
     compile 'com.wdullaer:materialdatetimepicker:2.5.0'
     compile 'com.github.cooltechworks:CreditCardView:v1.0.1'
     compile 'com.google.firebase:firebase-messaging:9.0.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

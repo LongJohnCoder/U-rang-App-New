@@ -55,6 +55,14 @@
             android:layout_alignTop="@+id/tvStartTimeFrame"
             android:layout_alignParentEnd="true" />
 
+        <TextView
+            android:text="Pickup Time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/textView10" />
+
     </RelativeLayout>
 
 </LinearLayout>

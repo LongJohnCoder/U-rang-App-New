@@ -21,6 +21,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -230,7 +233,7 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
                             Double gainedMoney = Double.parseDouble(schoolDonationObject.getString("actual_total_money_gained"));
                             Double pendingMoney = Double.parseDouble(schoolDonationObject.getString("actual_pending_money"));
                             String image = schoolDonationObject.getString("image");
-                            final String imageUrl = UserConstants.BASE_URL+UserConstants.IMAGE_FOLDER+image;
+                            String imageUrl = UserConstants.BASE_URL+UserConstants.IMAGE_FOLDER+image;
 
 
                             View inflatedLayoutNoSchools = getLayoutInflater(mysavedInstance).inflate(R.layout.school_donation_schools, null, false);
@@ -239,7 +242,9 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
                             TextView tvSchoolPendingMoney = (TextView) inflatedLayoutNoSchools.findViewById(R.id.tvSchoolPendingMoney);
                             final ImageView ivSchoolImageDonation = (ImageView) inflatedLayoutNoSchools.findViewById(R.id.ivSchoolImageDonation);
 
-                            AsyncTask asyncTask = new AsyncTask<Void, Void, Void>() {
+                            Glide.with(this).load(UserConstants.BASE_URL+UserConstants.IMAGE_FOLDER+image).placeholder(R.drawable.loadingimage).crossFade().into(ivSchoolImageDonation);
+
+                            /*AsyncTask asyncTask = new AsyncTask<Void, Void, Void>() {
                                 Bitmap bmp;
                                 @Override
                                 protected void onPreExecute() {
@@ -265,9 +270,9 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
 
                                         ivSchoolImageDonation.setImageBitmap(bmp);
                                 }
-                            }.execute();
+                            }.execute();*/
 
-                            imageLoadingThread.add(asyncTask);
+                            //imageLoadingThread.add(asyncTask);
 
 
                             tvSchoolNameDonation.setText(schoolName);

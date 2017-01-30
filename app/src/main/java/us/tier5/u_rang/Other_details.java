@@ -54,7 +54,7 @@ import Others.SaveUserData;
 public class Other_details extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener,TimePickerDialog.OnTimeSetListener,AdapterView.OnItemSelectedListener,View.OnClickListener, AsyncResponse.Response, AsyncResponse2.Response2 , AsyncResponse3.Response3, AsyncResponse4.Response4, AsyncResponse5.Response5{
 
     //page variable
-    LinearLayout PickUpTimeLL;
+    LinearLayout PickUpTimeLL,ReturnPickUpTimeLL;
     Switch swDoorman;
     int doorman=1;
     Spinner pay_method;
@@ -62,8 +62,8 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
     Switch swWashFold;
     Switch swDonateToSchool;
     TextView submitPickup;
-    String startTimeFrame = "__:__";
-    String endTimeFrame = "__:__";
+    String startTimeFrame = "__:__",returnStartTimeFrame = "__:__";
+    String endTimeFrame = "__:__",returnEndTimeFrame = "__:__";
     Spinner spinner;
     TextView tvAdditionalOptions;
     List<String> spinnerArray =  new ArrayList<String>();
@@ -75,8 +75,8 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
     boolean showCouponDialogeOrNot = true;
     boolean cardDetailsareThere=false;
 
-    TextView tvStartTimeFrame;
-    TextView tvEndTimeFrame;
+    TextView tvStartTimeFrame,tvReturnStartTimeFrame;
+    TextView tvEndTimeFrame,tvReturnEndTimeFrame;
 
     //
     TimePickerDialog startTimePicker;
@@ -108,6 +108,11 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
     int First24Min;
     int Second24Hour;
     int Second24Min;
+
+    int ReturnFirst24Hour;
+    int ReturnFirst24Min;
+    int ReturnSecond24Hour;
+    int ReturnSecond24Min;
 
 
     //Loading variable
@@ -148,6 +153,8 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
 
 
         PickUpTimeLL = (LinearLayout) findViewById(R.id.PickUpTimeLL);
+        ReturnPickUpTimeLL = (LinearLayout) findViewById(R.id.ReturnPickUpTimeLL);
+
         tvAdditionalOptions = (TextView) findViewById(R.id.tvAdditionalOptions);
 
         swDoorman = (Switch) findViewById(R.id.swDoorman);
@@ -255,11 +262,22 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                 }
                 SaveUserData.data_total.put("time_frame_start",startTimeFrame);
                 SaveUserData.data_total.put("time_frame_end",endTimeFrame);
+                SaveUserData.data_total.put("return_time_frame_end",returnEndTimeFrame);
+                SaveUserData.data_total.put("return_time_frame_start",returnStartTimeFrame);
+                //Toast.makeText(Other_details.this, ""+returnEndTimeFrame, Toast.LENGTH_SHORT).show();
                 if(!SaveUserData.data_total.get("pay_method").equals(""))
                 {
                     if(endTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
                     {
                         Toast.makeText(getApplicationContext(),"You have to select a end time frame!",Toast.LENGTH_SHORT).show();
+                    }
+                    else if(returnEndTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
+                    {
+                        Toast.makeText(getApplicationContext(),"You have to select a Return End time frame!",Toast.LENGTH_SHORT).show();
+                    }
+                    else if(returnStartTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
+                    {
+                        Toast.makeText(getApplicationContext(),"You have to select a Return Start time frame!",Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
@@ -370,12 +388,14 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                     {
                         tvEndTimeFrame.setText(changeDateFormat(selectedHour+":"+selectedMinute));
                         endTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                        showReturnFirstTimerAutomatic();
                     }
                 }
                 else
                 {
                     tvEndTimeFrame.setText(changeDateFormat(selectedHour+":"+selectedMinute));
                     endTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                    showReturnFirstTimerAutomatic();
                 }
             }
         }, hour, minute, true);//Yes 24 hour time
@@ -474,12 +494,14 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                     {
                         tvEndTimeFrame.setText(changeDateFormat(selectedHour+":"+selectedMinute));
                         endTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                        showReturnFirstTimerAutomatic();
                     }
                 }
                 else
                 {
                     tvEndTimeFrame.setText(changeDateFormat(selectedHour+":"+selectedMinute));
                     endTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                    showReturnFirstTimerAutomatic();
                 }
             }
         }, hour, minute, true);//Yes 24 hour time
@@ -494,7 +516,12 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         {
             doorman = 1;
             PickUpTimeLL.removeAllViews();
+            ReturnPickUpTimeLL.removeAllViews();
             SaveUserData.data_total.put("doorman","1");
+            returnEndTimeFrame="__:__";
+            returnStartTimeFrame = "__:__";
+            endTimeFrame = "__:__";
+            startTimeFrame = "__:__";
 
         }
         else
@@ -503,13 +530,163 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
             startTimePicker.show();
             startTime = "";
             SaveUserData.data_total.put("doorman","0");
+
+
+
         }
+    }
+
+    public void inflateReturnTimeFrame()
+    {
+        View inflatedLayoutRR_OrderDetail = getLayoutInflater().inflate(R.layout.return_order_timeframe, null, false);
+        tvReturnStartTimeFrame = (TextView) inflatedLayoutRR_OrderDetail.findViewById(R.id.tvReturnStartTimeFrame);
+        tvReturnEndTimeFrame = (TextView) inflatedLayoutRR_OrderDetail.findViewById(R.id.tvReturnEndTimeFrame);
+
+
+
+        tvReturnStartTimeFrame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showReturnFirstTimer();
+            }
+        });
+
+        tvReturnEndTimeFrame.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            showReturnSeconTimer();
+        }
+    });
+
+
+
+        ReturnPickUpTimeLL.addView(inflatedLayoutRR_OrderDetail);
+    }
+
+    public void showReturnFirstTimerAutomatic()
+    {
+        Calendar mcurrentTime = Calendar.getInstance();
+        final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        final int minute = mcurrentTime.get(Calendar.MINUTE);
+
+        TimePickerDialog returnStartTimePickerDialog = new TimePickerDialog(Other_details.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
+                ReturnFirst24Hour = selectedHour;
+                ReturnFirst24Min = selectedMinute;
+
+                //Toast.makeText(Other_details.this, ""+selectedHour+":"+selectedMinute, Toast.LENGTH_SHORT).show();
+                tvReturnStartTimeFrame.setText(changeDateFormat(selectedHour+":"+selectedMinute));
+                returnStartTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                showReturnSeconTimer();
+
+
+
+            }
+        }, hour, minute, true);//Yes 24 hour time
+        returnStartTimePickerDialog.setTitle("Select Return Start Time Frame");
+        returnStartTimePickerDialog.show();
+    }
+
+    public void showReturnFirstTimer()
+    {
+        Calendar mcurrentTime = Calendar.getInstance();
+        final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        final int minute = mcurrentTime.get(Calendar.MINUTE);
+
+        TimePickerDialog returnStartTimePickerDialog = new TimePickerDialog(Other_details.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
+                ReturnFirst24Hour = selectedHour;
+                ReturnFirst24Min = selectedMinute;
+
+                if(ReturnSecond24Hour<selectedHour)
+                {
+                    Toast.makeText(Other_details.this, "Return Start Time cannot be after Return End Time!", Toast.LENGTH_SHORT).show();
+                    showReturnFirstTimer();
+                }
+                else if(ReturnSecond24Hour<selectedHour)
+                {
+                    if(ReturnSecond24Min<=selectedMinute)
+                    {
+                        Toast.makeText(Other_details.this, "Return Start Time cannot be after Return End Time!", Toast.LENGTH_SHORT).show();
+                        showReturnFirstTimer();
+                    }
+                    else
+                    {
+                        tvReturnStartTimeFrame.setText(changeDateFormat(selectedHour+":"+selectedMinute));
+                        returnStartTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                    }
+
+                }
+                else
+                {
+                    //Toast.makeText(Other_details.this, ""+selectedHour+":"+selectedMinute, Toast.LENGTH_SHORT).show();
+                    tvReturnStartTimeFrame.setText(changeDateFormat(selectedHour+":"+selectedMinute));
+                    returnStartTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                    //showReturnSeconTimer();
+                }
+
+
+
+
+
+            }
+        }, hour, minute, true);//Yes 24 hour time
+        returnStartTimePickerDialog.setTitle("Select Return Start Time Frame");
+        returnStartTimePickerDialog.show();
+    }
+
+    public void showReturnSeconTimer()
+    {
+        Calendar mcurrentTime = Calendar.getInstance();
+        final int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        final int minute = mcurrentTime.get(Calendar.MINUTE);
+
+        TimePickerDialog returnEndTimePickerDialog = new TimePickerDialog(Other_details.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
+                ReturnSecond24Hour = selectedHour;
+                ReturnSecond24Min = selectedMinute;
+
+                if(ReturnFirst24Hour>selectedHour)
+                {
+                    Toast.makeText(Other_details.this, "Return End time cannot be before Return Start time ", Toast.LENGTH_SHORT).show();
+                    showReturnSeconTimer();
+                }
+                else if(ReturnFirst24Hour==selectedHour)
+                {
+                    if(ReturnFirst24Min>=selectedMinute)
+                    {
+                        Toast.makeText(Other_details.this, "Return End time cannot be before Return Start time!", Toast.LENGTH_SHORT).show();
+                        showReturnSeconTimer();
+                    }
+                    else
+                    {
+                        tvReturnEndTimeFrame.setText(/*changeDateFormat(*/selectedHour+":"+selectedMinute/*)*/);
+                        returnEndTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                    }
+                }
+                else
+                {
+                    tvReturnEndTimeFrame.setText(changeDateFormat(selectedHour+":"+selectedMinute));
+                    returnEndTimeFrame = changeDateFormat(selectedHour+":"+selectedMinute);
+                }
+
+            }
+        }, hour, minute, true);//Yes 24 hour time
+        returnEndTimePickerDialog.setTitle("Select Return End Time Frame");
+        returnEndTimePickerDialog.show();
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         //Toast.makeText(getApplicationContext(),hourOfDay+":"+minute,Toast.LENGTH_SHORT).show();
         inflateTimeFrame(hourOfDay,minute);
+        inflateReturnTimeFrame();
     }
 
     public String changeDateFormat(String time)
@@ -567,12 +744,22 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         }
         SaveUserData.data_total.put("time_frame_start",startTimeFrame);
         SaveUserData.data_total.put("time_frame_end",endTimeFrame);
+        SaveUserData.data_total.put("return_time_frame_end",returnEndTimeFrame);
+        SaveUserData.data_total.put("return_time_frame_start",returnStartTimeFrame);
         Log.i("kingsukmajumder",SaveUserData.data_total.toString());
         if(!SaveUserData.data_total.get("pay_method").equals(""))
         {
             if(endTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
             {
                 Toast.makeText(getApplicationContext(),"You have to select a end time frame!",Toast.LENGTH_SHORT).show();
+            }
+            else if(returnEndTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
+            {
+                Toast.makeText(getApplicationContext(),"You have to select a Return end time frame!",Toast.LENGTH_SHORT).show();
+            }
+            else if(returnStartTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
+            {
+                Toast.makeText(getApplicationContext(),"You have to select a Return Start time frame!",Toast.LENGTH_SHORT).show();
             }
             else
             {

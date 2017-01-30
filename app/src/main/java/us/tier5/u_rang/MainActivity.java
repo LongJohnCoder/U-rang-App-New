@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
     EditText mob;
     TextView cont;
     EditText name;
+    EditText etRefEmail;
 
     TextView signin;
     Button btnRegister;
@@ -86,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
         signin = (TextView)findViewById(R.id.signin);
 
         btnRegister = (Button) findViewById(R.id.btnRegister);
+
+        etRefEmail = (EditText) findViewById(R.id.etRefEmail);
 
 
         btnRegister.setOnClickListener(this);
@@ -161,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
             if(emailValidator.validate(email.getText().toString()))
             {
                 smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
+                Log.i("kingsukmajumder","sms verification code is "+smsVerificationCode);
                 dataSms.put("to",mob.getText().toString());
                 dataSms.put("body",smsVerificationCode);
                 //loadingSms = ProgressDialog.show(this, "","Verifying your number", true, false);
@@ -221,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
                         data.put("personal_phone",mob.getText().toString());
                         data.put("password",pass.getText().toString());
                         data.put("conf_password",again.getText().toString());
+                        data.put("ref_name",etRefEmail.getText().toString());
                         loading = ProgressDialog.show(MainActivity.this, "","Please wait", true, false);
                         registerUser.register(data,route);
                     }
