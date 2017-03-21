@@ -50,7 +50,7 @@
                 android:textColorHint="#fff"
                 android:textCursorDrawable="@null"
                 android:textSize="14dp"
-                android:inputType="text"
+                android:inputType="textEmailAddress"
                 android:textColor="#fff"
                 android:singleLine="true"
 

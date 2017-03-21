@@ -1,27 +1,33 @@
 {
   "project_info": {
-    "project_number": "395196400266",
-    "firebase_url": "https://coral-shift-138423.firebaseio.com",
-    "project_id": "coral-shift-138423",
-    "storage_bucket": "coral-shift-138423.appspot.com"
+    "project_number": "3452521019",
+    "project_id": "firebase-u-rang"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:395196400266:android:5d98bc430c65d28b",
+        "mobilesdk_app_id": "1:3452521019:android:5d98bc430c65d28b",
         "android_client_info": {
           "package_name": "us.tier5.u_rang"
         }
       },
       "oauth_client": [
         {
-          "client_id": "395196400266-qa6llggm53bofai9ot0pk8uvgd1q6mnv.apps.googleusercontent.com",
+          "client_id": "3452521019-vg6kem5drkncvacp7es1q97j2adr046s.apps.googleusercontent.com",
           "client_type": 3
+        },
+        {
+          "client_id": "3452521019-nrp5vd1t5l5erniphdlme0a0442e4b5j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "us.tier5.u_rang",
+            "certificate_hash": "a15a6439f411c9d7eda325c56902f433bf3158d0"
+          }
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAUvuV1PNz2W0tycHQHKo-zz2EO8lIJIEQ"
+          "current_key": "AIzaSyBYdGZlyhq01EcT1uoGSP2qPUlQ4zErlb4"
         }
       ],
       "services": {
@@ -33,69 +39,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:395196400266:android:d53c4cf75ea7d430",
-        "android_client_info": {
-          "package_name": "com.tier5.redeemar.RedeemarConsumerApp"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "395196400266-qa6llggm53bofai9ot0pk8uvgd1q6mnv.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAUvuV1PNz2W0tycHQHKo-zz2EO8lIJIEQ"
-        }
-      ],
-      "services": {
-        "analytics_service": {
           "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:395196400266:android:90387e53be1b9898",
-        "android_client_info": {
-          "package_name": "us.tier5.testfcm.testfcm"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "395196400266-qa6llggm53bofai9ot0pk8uvgd1q6mnv.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAUvuV1PNz2W0tycHQHKo-zz2EO8lIJIEQ"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

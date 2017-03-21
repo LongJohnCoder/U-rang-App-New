@@ -2,15 +2,28 @@ package FragmentClasses;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import HelperClasses.AsyncResponse;
+import HelperClasses.RegisterUser;
+import us.tier5.u_rang.LoginActivity;
 import us.tier5.u_rang.R;
+import us.tier5.u_rang.Splash;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,12 +33,16 @@ import us.tier5.u_rang.R;
  * Use the {@link Contact_fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Contact_fragment extends Fragment {
+public class Contact_fragment extends Fragment implements AsyncResponse.Response {
 
     //page variables
     ImageView ivEmailContact;
     ImageView ivCall;
 
+    //server variable
+    HashMap<String, String> data = new HashMap<String,String>();
+    String route = "/V1/getProgileDetails";
+    RegisterUser registerUser = new RegisterUser("POST");
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -74,6 +91,9 @@ public class Contact_fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View fragView = inflater.inflate(R.layout.fragment_contact_fragment, container, false);
+
+        registerUser.delegate = this;
+        registerUser.register(data, route);
 
         ImageView ivEmailContact = (ImageView) fragView.findViewById(R.id.ivEmailContact);
 
@@ -140,5 +160,29 @@ public class Contact_fragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void processFinish(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.v("PROFILE_STATUS:", jsonObject.toString());
+            if (jsonObject.getInt("status_code") == 301) {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e)
+        {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
     }
 }

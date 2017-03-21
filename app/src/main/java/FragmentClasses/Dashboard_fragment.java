@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
+import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
 import com.roger.gifloadinglibrary.GifLoadingView;
 
@@ -31,14 +32,18 @@ import java.util.HashMap;
 
 import HelperClasses.AsyncResponse;
 import HelperClasses.AsyncResponse2;
+import HelperClasses.AsyncResponse3;
 import HelperClasses.CheckNetwork;
 import HelperClasses.RegisterUser;
 import HelperClasses.RegisterUser2;
+import HelperClasses.RegisterUser3;
 import Others.SaveUserData;
 import us.tier5.u_rang.Dashboard;
 import us.tier5.u_rang.Detailed_pickup;
+import us.tier5.u_rang.LoginActivity;
 import us.tier5.u_rang.Order_details;
 import us.tier5.u_rang.R;
+import us.tier5.u_rang.Splash;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,7 +53,7 @@ import us.tier5.u_rang.R;
  * Use the {@link Dashboard_fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Dashboard_fragment extends Fragment implements AsyncResponse.Response, AsyncResponse2.Response2{
+public class Dashboard_fragment extends Fragment implements AsyncResponse.Response, AsyncResponse2.Response2, AsyncResponse3.Response3 {
     //custom variables
     LoginButton loginButton;
     CallbackManager callbackManager;
@@ -70,8 +75,10 @@ public class Dashboard_fragment extends Fragment implements AsyncResponse.Respon
     HashMap<String, String> data = new HashMap<String,String>();
     String route = "/V1/order-tracker";
     String routeCancleOrder = "/V1/cancle-order";
+    String routeGetProfileDetails = "/V1/getProgileDetails";
     RegisterUser registerUser = new RegisterUser("POST");
     RegisterUser2 registerUser2 = new RegisterUser2("POST");
+    RegisterUser3 registerUser3 = new RegisterUser3("POST");
 
     //gif loader variables
     GifLoadingView mGifLoadingView;
@@ -140,6 +147,9 @@ public class Dashboard_fragment extends Fragment implements AsyncResponse.Respon
         mysavedInstance = savedInstanceState;
         registerUser.delegate = this;
         registerUser2.delegate = this;
+        registerUser3.delegate = this;
+
+        registerUser3.register(data,routeGetProfileDetails);
 
         manager = ((Activity) getContext()).getFragmentManager();
         mGifLoadingView = new GifLoadingView();
@@ -324,7 +334,6 @@ public class Dashboard_fragment extends Fragment implements AsyncResponse.Respon
         Log.i("kingsukmajumder",output);
         int currentIndex = 0;
         showActiveOrderStatus(output,currentIndex);
-
     }
 
 
@@ -457,6 +466,28 @@ public class Dashboard_fragment extends Fragment implements AsyncResponse.Respon
         catch (Exception e)
         {
             Log.i("kingsukmajumder","error in cancle order "+e.toString());
+        }
+    }
+
+    @Override
+    public void processFinish3(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            if (jsonObject.getInt("status_code") == 301) {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
         }
     }
 

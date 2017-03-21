@@ -720,10 +720,10 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
             loadingCreditCard = ProgressDialog.show(Other_details.this, "","Searching for your credit card details", true, false);
             registerUser2.register(data,routeGetCardInfo);
         }
-        else if(pay_method.getItemAtPosition(position).equals("Check"))
+        /*else if(pay_method.getItemAtPosition(position).equals("Check"))
         {
             SaveUserData.data_total.put("pay_method","3");
-        }
+        }*/
         else
         {
             SaveUserData.data_total.put("pay_method","");
@@ -1033,13 +1033,13 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                 JSONObject responseObj = new JSONObject(jsonObject.getString("response"));
                 //Log.i("kingsukmajumder","response is "+responseObj);
                 int paymentType = responseObj.getInt("payment_type");
-                if(paymentType==3)
-                {
-                    pay_method.setSelection(2);
-                }
-                else if(paymentType==1)
+                if(paymentType==1)
                 {
                     pay_method.setSelection(1);
+                }
+                else /*if(paymentType==1)*/
+                {
+                    pay_method.setSelection(0);
                 }
 
                 int emergencyStatus = responseObj.getInt("is_emergency");

@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.cooltechworks.creditcarddesign.CardEditActivity;
 import com.cooltechworks.creditcarddesign.CreditCardUtils;
 import com.cooltechworks.creditcarddesign.CreditCardView;
+import com.facebook.login.LoginManager;
 import com.roger.gifloadinglibrary.GifLoadingView;
 
 import org.json.JSONObject;
@@ -30,10 +31,14 @@ import java.util.regex.Pattern;
 
 import HelperClasses.AsyncResponse;
 import HelperClasses.AsyncResponse2;
+import HelperClasses.AsyncResponse3;
 import HelperClasses.CheckNetwork;
 import HelperClasses.RegisterUser;
 import HelperClasses.RegisterUser2;
+import HelperClasses.RegisterUser3;
+import us.tier5.u_rang.LoginActivity;
 import us.tier5.u_rang.R;
+import us.tier5.u_rang.Splash;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -45,7 +50,7 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link Profile_fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Profile_fragment extends Fragment implements AsyncResponse.Response, AsyncResponse2.Response2,View.OnClickListener{
+public class Profile_fragment extends Fragment implements AsyncResponse.Response, AsyncResponse2.Response2,View.OnClickListener, AsyncResponse3.Response3 {
 
     //configuration variables
     FragmentManager manager;
@@ -57,6 +62,7 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
     String routeUpdateProfile = "V1/updateProfile";
     RegisterUser registerUser = new RegisterUser("POST");
     RegisterUser2 registerUser2 = new RegisterUser2("POST");
+    RegisterUser3 registerUser3 = new RegisterUser3("POST");
     int user_id;
 
     //gif loader variables
@@ -139,6 +145,9 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
 
         registerUser.delegate = this;
         registerUser2.delegate = this;
+        registerUser3.delegate = this;
+
+        registerUser3.register(data, route);
 
         manager = ((Activity) getContext()).getFragmentManager();
         mGifLoadingView = new GifLoadingView();
@@ -301,8 +310,7 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
                     Toast.makeText(getContext(),"No Credit Card Info Found",Toast.LENGTH_SHORT).show();
                     Log.i("kingsukmajumder",e.toString());
                 }
-            }
-            else
+            } else
             {
                 Toast.makeText(getContext(),jsonObject.getString("message"),Toast.LENGTH_SHORT).show();
             }
@@ -335,6 +343,29 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
         catch (Exception e)
         {
             Log.i("kingsukmajumder",e.toString());
+        }
+    }
+
+    @Override
+    public void processFinish3(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            if (jsonObject.getInt("status_code") == 301) {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e)
+        {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
         }
     }
 

@@ -1,16 +1,14 @@
 package us.tier5.u_rang;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,9 +23,7 @@ import HelperClasses.AsyncResponse;
 import HelperClasses.AsyncResponseSms;
 import HelperClasses.AsyncSmsTracker;
 import HelperClasses.EmailValidator;
-import HelperClasses.RegisterSms;
 import HelperClasses.RegisterUser;
-import HelperClasses.RegisterUser2;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse.Response,View.OnClickListener, AsyncResponseSms.ResponseSms, AsyncSmsTracker.ResponseSms{
 
@@ -43,21 +39,23 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
     Button btnRegister;
     EditText edt;
 
-    String smsVerificationCode="";
+//    String smsVerificationCode="";
 
     RegisterUser registerUser = new RegisterUser("POST");
     HashMap<String,String> data = new HashMap<>();
     String route = "/V1/sign-up-user";
 
 
+/*
     RegisterSms registerSms = new RegisterSms("POST");
     HashMap<String,String> dataSms = new HashMap<>();
-    String routeSms = "https://www.textinbulk.com/app/api/send/ND";
+    String routeSms = "http://dev.textinbulk.com/app/api/send/ND";
+*/
 
-    SmsListener smsListener = new SmsListener();
+//    SmsListener smsListener = new SmsListener();
 
     ProgressDialog loading;
-    ProgressDialog loadingSms;
+//    ProgressDialog loadingSms;
 
 
 
@@ -66,10 +64,10 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        smsListener.delegate=this;
+        //smsListener.delegate=this;
 
         registerUser.delegate = this;
-        registerSms.delegate=this;
+        //registerSms.delegate=this;
 
 
         email = (EditText)findViewById(R.id.email);
@@ -79,6 +77,68 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
          again= (EditText)findViewById(R.id.again);
 
         mob = (EditText)findViewById(R.id.mob);
+        mob.addTextChangedListener(new PhoneNumberFormattingTextWatcher()  {
+            //we need to know if the user is erasing or inputing some new character
+            private boolean backspacingFlag = false;
+            //we need to block the :afterTextChanges method to be called again after we just replaced the EditText text
+            private boolean editedFlag = false;
+            //we need to mark the cursor position and restore it after the edition
+            private int cursorComplement;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                //we store the cursor local relative to the end of the string in the EditText before the edition
+                cursorComplement = s.length()-mob.getSelectionStart();
+                //we check if the user ir inputing or erasing a character
+                if (count > after) {
+                    backspacingFlag = true;
+                } else {
+                    backspacingFlag = false;
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // nothing to do here =D
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String string = s.toString();
+                //what matters are the phone digits beneath the mask, so we always work with a raw string with only digits
+                String phone = string.replaceAll("[^\\d]", "");
+
+                //if the text was just edited, :afterTextChanged is called another time... so we need to verify the flag of edition
+                //if the flag is false, this is a original user-typed entry. so we go on and do some magic
+                if (!editedFlag) {
+
+                    //we start verifying the worst case, many characters mask need to be added
+                    //example: 999999999 <- 6+ digits already typed
+                    // masked: (999) 999-999
+                    if (phone.length() >= 6 && !backspacingFlag) {
+                        //we will edit. next call on this textWatcher will be ignored
+                        editedFlag = true;
+                        //here is the core. we substring the raw digits and add the mask as convenient
+                        String ans = "(" + phone.substring(0, 3) + ") " + phone.substring(3,6) + "-" + phone.substring(6);
+                        mob.setText(ans);
+                        //we deliver the cursor to its original position relative to the end of the string
+                        mob.setSelection(mob.getText().length()-cursorComplement);
+
+                        //we end at the most simple case, when just one character mask is needed
+                        //example: 99999 <- 3+ digits already typed
+                        // masked: (999) 99
+                    } else if (phone.length() >= 3 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = "(" +phone.substring(0, 3) + ") " + phone.substring(3);
+                        mob.setText(ans);
+                        mob.setSelection(mob.getText().length()-cursorComplement);
+                    }
+                    // We just edited the field, ignoring this cicle of the watcher and getting ready for the next
+                } else {
+                    editedFlag = false;
+                }
+            }
+        });
 
         cont = (TextView)findViewById(R.id.cont);
 
@@ -163,23 +223,23 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
             EmailValidator emailValidator = new EmailValidator();
             if(emailValidator.validate(email.getText().toString()))
             {
-                smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
-                Log.i("kingsukmajumder","sms verification code is "+smsVerificationCode);
-                dataSms.put("to",mob.getText().toString());
-                dataSms.put("body",smsVerificationCode);
+               // smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
+                //Log.i("kingsukmajumder","sms verification code is "+smsVerificationCode);
+                //dataSms.put("to",mob.getText().toString());
+                //dataSms.put("body",smsVerificationCode);
                 //loadingSms = ProgressDialog.show(this, "","Verifying your number", true, false);
-                registerSms.register(dataSms,routeSms);
+                //registerSms.register(dataSms,routeSms);
 
-                createSmsPopup();
+                //createSmsPopup();
 
-                /*data.put("email",email.getText().toString());
-                data.put("name",name.getText().toString());
-                data.put("personal_phone",mob.getText().toString());
-                data.put("password",pass.getText().toString());
-                data.put("conf_password",again.getText().toString());
-                Log.i("kingsukmajumder",data.toString());
-                loading = ProgressDialog.show(this, "","Please wait", true, false);
-                registerUser.register(data,route);*/
+                data.put("email", email.getText().toString());
+                data.put("name", name.getText().toString());
+                data.put("personal_phone", mob.getText().toString());
+                data.put("password", pass.getText().toString());
+                data.put("conf_password", again.getText().toString());
+                Log.i("kingsukmajumder", data.toString());
+                loading = ProgressDialog.show(this, "", "Please wait", true, false);
+                registerUser.register(data, route);
             }
             else
             {
@@ -194,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
 
     }
 
-    public void createSmsPopup()
+    /*public void createSmsPopup()
     {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -241,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
 
         AlertDialog b = dialogBuilder.create();
         b.show();
-    }
+    }*/
 
     @Override
     public void processFinishSms(String output) {
