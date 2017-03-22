@@ -200,7 +200,8 @@
                         android:orientation="horizontal"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentStart="true"
-                        android:layout_margin="3dp">
+                        android:layout_margin="10dp"
+                        android:paddingRight="20dp" >
 
                     <Button
                         android:id="@+id/btnDateToday"
@@ -210,6 +211,7 @@
                         android:textColor="#ffffff"
                         android:textSize="15sp"
                         android:background="@drawable/round_orange"
+                        android:layout_marginRight="3dp"
                         />
 
 
@@ -247,7 +249,7 @@
                         android:id="@+id/btnDayThird"
                         android:textColor="#ffffff"
                         android:textSize="8sp"
-                            android:padding="1dp"
+                        android:padding="1dp"
                         android:background="@drawable/round_orange"
                         android:layout_marginLeft="3dp"
                         android:layout_marginRight="3dp"
@@ -263,7 +265,7 @@
                             android:src="@drawable/fa_calender"
                             android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"
-                            android:layout_marginStart="10dp" />
+                            android:layout_marginStart="5dp" />
 
                     </LinearLayout>
                     </HorizontalScrollView>
