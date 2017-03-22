@@ -201,7 +201,7 @@
             android:inputType="phone"
             android:digits="0123456789+"
             android:lines="1"
-            android:maxLength="16"
+            android:maxLength="14"
             android:hint="Mobile Number"
             android:textColorHint="#fff"
             android:textSize="14dp"

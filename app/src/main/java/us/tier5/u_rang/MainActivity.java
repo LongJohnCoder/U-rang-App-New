@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
          again= (EditText)findViewById(R.id.again);
 
         mob = (EditText)findViewById(R.id.mob);
+        /** Phone number masking using TextWatcher */
         mob.addTextChangedListener(new PhoneNumberFormattingTextWatcher()  {
             //we need to know if the user is erasing or inputing some new character
             private boolean backspacingFlag = false;
