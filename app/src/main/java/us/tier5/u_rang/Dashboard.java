@@ -25,6 +25,7 @@ import com.facebook.login.LoginManager;
 
 import FragmentClasses.Contact_fragment;
 import FragmentClasses.Dashboard_fragment;
+import FragmentClasses.HowItWorks_Fragment;
 import FragmentClasses.PriceList_fragment;
 import FragmentClasses.Profile_fragment;
 import FragmentClasses.SchoolDonation_fragment;
@@ -34,7 +35,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Dashboard extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,Dashboard_fragment.OnFragmentInteractionListener,PriceList_fragment.OnFragmentInteractionListener,SchoolDonation_fragment.OnFragmentInteractionListener,Contact_fragment.OnFragmentInteractionListener, Profile_fragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener,
+        Dashboard_fragment.OnFragmentInteractionListener,
+        PriceList_fragment.OnFragmentInteractionListener,
+        SchoolDonation_fragment.OnFragmentInteractionListener,
+        Contact_fragment.OnFragmentInteractionListener,
+        Profile_fragment.OnFragmentInteractionListener,
+        HowItWorks_Fragment.OnFragmentInteractionListener {
 
     //fragment variables
     Fragment fragment = null;
@@ -59,7 +66,7 @@ public class Dashboard extends AppCompatActivity
         AppEventsLogger.activateApp(this);
 
         setContentView(R.layout.activity_dashboard);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -217,6 +224,10 @@ public class Dashboard extends AppCompatActivity
             intent.putExtra("classname","FragmentClasses.Profile_fragment");
             startActivity(intent);
 
+        } else if (id == R.id.howItWorks) {
+            Intent intent = new Intent(Dashboard.this,DashboardNew.class);
+            intent.putExtra("classname","FragmentClasses.HowItWorks_Fragment");
+            startActivity(intent);
         } /*else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -243,5 +254,9 @@ public class Dashboard extends AppCompatActivity
 
     }
 
+    @Override
+    public void onFragmentInteraction(String title) {
+        getSupportActionBar().setTitle(title);
+    }
 
 }

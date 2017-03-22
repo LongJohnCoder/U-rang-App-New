@@ -39,6 +39,10 @@
                 android:icon="@drawable/ic_profile_icon"
                 android:title="Profile"/>
             <item
+                android:id="@+id/howItWorks"
+                android:icon="@drawable/ic_info_outline_white"
+                android:title="How it works"/>
+            <item
                 android:id="@+id/logout"
                 android:icon="@drawable/ic_logout"
                 android:title="Logout"/>

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.facebook.login.LoginManager;
 
 import FragmentClasses.Contact_fragment;
+import FragmentClasses.HowItWorks_Fragment;
 import FragmentClasses.Orders_fragment;
 import FragmentClasses.Profile_fragment;
 
@@ -27,7 +28,11 @@ import FragmentClasses.Profile_fragment;
  */
 
 public class DashboardNew extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,Orders_fragment.OnFragmentInteractionListener,Contact_fragment.OnFragmentInteractionListener,Profile_fragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        Orders_fragment.OnFragmentInteractionListener,
+        Contact_fragment.OnFragmentInteractionListener,
+        Profile_fragment.OnFragmentInteractionListener,
+        HowItWorks_Fragment.OnFragmentInteractionListener {
 
     //fragment variables
     Fragment fragment = null;
@@ -175,5 +180,11 @@ public class DashboardNew extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void onFragmentInteraction(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
 }
 

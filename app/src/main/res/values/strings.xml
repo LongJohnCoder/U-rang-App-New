@@ -106,4 +106,8 @@
     <string name="maiil_email_com">maiil@email.com</string>
     <string name="email">Email</string>
     <string name="enter_number_here">Enter Number Here</string>
+
+    <string name="how_it_works">What is U-Rang?</string>
+    <string name="login_donation_declaration">U-rang believes in the children of New York City" We will donate 10% of your order to the school of your choice. As money accumulates monthly it will be sent to that school's PTA or administration. We too have children and like you we believe in giving them every opportunity we can to help them succeed.</string>
+    <string name="google_sign_in_button_text">Sign in with Google</string>
 </resources>

@@ -25,7 +25,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:node="replace">
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -35,7 +36,6 @@
             android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -46,22 +46,22 @@
             android:name="com.cooltechworks.creditcarddesign.CardEditActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="us.tier5.u_rang.Dashboard"
+            android:name=".Dashboard"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="us.tier5.u_rang.DashboardNew"
+            android:name=".DashboardNew"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="us.tier5.u_rang.Carousel"
+            android:name=".Carousel"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeSplash" />
         <activity
-            android:name="us.tier5.u_rang.Splash"
+            android:name=".Splash"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeSplash">
             <intent-filter>
@@ -71,14 +71,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="us.tier5.u_rang.LoginActivity"
+            android:name=".LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name="us.tier5.u_rang.Order_details"
+            android:name=".Order_details"
             android:label="@string/title_activity_order_details"
-            android:parentActivityName="us.tier5.u_rang.Dashboard"
+            android:parentActivityName=".Dashboard"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -86,9 +86,9 @@
                 android:value="us.tier5.u_rang.Dashboard" />
         </activity>
         <activity
-            android:name="us.tier5.u_rang.Add_address"
+            android:name=".Add_address"
             android:label="@string/title_activity_add_address"
-            android:parentActivityName="us.tier5.u_rang.Order_details"
+            android:parentActivityName=".Order_details"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden">
@@ -97,9 +97,9 @@
                 android:value="us.tier5.u_rang.Order_details" />
         </activity>
         <activity
-            android:name="us.tier5.u_rang.Other_details"
+            android:name=".Other_details"
             android:label="@string/title_activity_other_details"
-            android:parentActivityName="us.tier5.u_rang.Order_details"
+            android:parentActivityName=".Order_details"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -107,9 +107,9 @@
                 android:value="us.tier5.u_rang.Order_details" />
         </activity>
         <activity
-            android:name="us.tier5.u_rang.PickUpOptional"
+            android:name=".PickUpOptional"
             android:label="@string/title_activity_pick_up_optional"
-            android:parentActivityName="us.tier5.u_rang.Other_details"
+            android:parentActivityName=".Other_details"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize">
@@ -118,9 +118,9 @@
                 android:value="us.tier5.u_rang.Other_details" />
         </activity>
         <activity
-            android:name="us.tier5.u_rang.Detailed_pickup"
+            android:name=".Detailed_pickup"
             android:label="@string/title_activity_detailed_pickup"
-            android:parentActivityName="us.tier5.u_rang.Dashboard"
+            android:parentActivityName=".Dashboard"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -128,21 +128,20 @@
                 android:value="us.tier5.u_rang.Dashboard" />
         </activity>
         <activity
-            android:name="us.tier5.u_rang.ForgotPassword"
+            android:name=".ForgotPassword"
             android:label="@string/title_activity_forgot_password"
-            android:parentActivityName="us.tier5.u_rang.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".LoginActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="us.tier5.u_rang.LoginActivity" />
         </activity>
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden">
-
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
 
         <!-- SMS Receiver -->
         <receiver android:name=".SmsListener">
@@ -151,16 +150,11 @@
             </intent-filter>
         </receiver>
 
-
-        <service
-            android:name=".MyFirebaseInstanceIDService">
+        <service android:name=".MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
-
-
     </application>
 
 </manifest>
