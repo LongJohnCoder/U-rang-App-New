@@ -24,6 +24,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -143,10 +144,13 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
 
                         // \n is for new line
                         //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                        String address = getAddress(latitude,longitude);
+                        HashMap<String, String> address = getAddress(latitude,longitude);
                         if(!address.equals(null)||!address.equals(""))
                         {
-                            etLocality.setText(address);
+                            etLocality.setText(address.get("addressLine"));
+                            etCity.setText(address.get("city"));
+                            etState.setText(address.get("state"));
+                            etZipCode.setText(address.get("zipCode"));
                         }
                         else
                         {
@@ -220,10 +224,13 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
 
                         // \n is for new line
                         //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                        String address = getAddress(latitude,longitude);
+                        HashMap<String, String> address = getAddress(latitude,longitude);
                         if(!address.equals(null)||!address.equals(""))
                         {
-                            etLocality.setText(address);
+                            etLocality.setText(address.get("addressLine"));
+                            etCity.setText(address.get("city"));
+                            etState.setText(address.get("state"));
+                            etZipCode.setText(address.get("zipCode"));
                         }
                         else
                         {
@@ -250,29 +257,30 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public String getAddress(double latitude, double longitude)
+    public HashMap<String, String> getAddress(double latitude, double longitude)
     {
         Geocoder geocoder;
-        String result = "";
+        HashMap<String, String> result = new HashMap<>();
         List<Address> addresses;
         geocoder = new Geocoder(this, Locale.getDefault());
 
         try{
             addresses = geocoder.getFromLocation(
                     latitude, longitude, 1);
+            Log.d("ADDRESS_ARRAY", addresses.toString());
             if (addresses != null && addresses.size() > 0) {
                 Address address = addresses.get(0);
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
                     if(!address.getAddressLine(i).equals(null))
                     {
-                        sb.append(address.getAddressLine(i)).append("\n");
+                        sb.append(address.getAddressLine(i)).append("\b");
                     }
                 }
-                sb.append(address.getLocality()).append("\n");
-                //sb.append(address.getPostalCode()).append("\n");
-                sb.append(address.getCountryName());
-                result = sb.toString();
+                result.put("addressLine", sb.toString());
+                result.put("city", address.getLocality());
+                result.put("state", address.getAdminArea());
+                result.put("zipCode", address.getPostalCode());
             }
             return result;
         }
