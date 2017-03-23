@@ -150,6 +150,7 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
         });
 
         swUrang_bag = (Switch) findViewById(R.id.swUrang_bag);
+        swUrang_bag.setChecked(false);
         swUrang_bag.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -188,7 +189,7 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
         });*/
 
 
-        if(SaveUserData.data_total.get("driving_ins")!=null)
+        /*if(SaveUserData.data_total.get("driving_ins")!=null)
         {
             etDrivingInstruction.setText(SaveUserData.data_total.get("driving_ins"));
         }
@@ -244,7 +245,7 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
                 tvboxed_or_hung.setText("Hung");
                 boxOrHungSpinner.setSelection(2);
             }
-        }
+        }*/
 
 
     }

@@ -320,23 +320,17 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         swHaveCoupone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked)
-                {
-                    if(showCouponDialogeOrNot)
-                    {
+                if(isChecked) {
+                    if(showCouponDialogeOrNot) {
                         showCouponDialoge();
                     }
-                }
-                else
-                {
+                } else {
                     tvAppliedCoupon.setText("");
                     tvAppliedCoupon.setVisibility(View.INVISIBLE);
                     couponString="";
                 }
             }
         });
-
-
     }
 
     public void inflateTimeFrame(int firsthourOfDay, int firstminute)
@@ -1042,14 +1036,14 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                     pay_method.setSelection(0);
                 }
 
-                int emergencyStatus = responseObj.getInt("is_emergency");
+                /*int emergencyStatus = responseObj.getInt("is_emergency");
 
                 if(emergencyStatus==1)
                 {
                     swEmergency.setChecked(true);
-                }
+                }*/
 
-                int doorMan = responseObj.getInt("door_man");
+                /*int doorMan = responseObj.getInt("door_man");
                 if(doorMan==1)
                 {
                     swDoorman.setChecked(true);
@@ -1087,10 +1081,10 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                     });
 
                     PickUpTimeLL.addView(inflatedLayoutRR_OrderDetail);
-                }
+                }*/
 
                 //for wash and fold
-                int washAndFold = responseObj.getInt("wash_n_fold");
+               /* int washAndFold = responseObj.getInt("wash_n_fold");
                 if(washAndFold==1)
                 {
                     swWashFold.setChecked(true);
@@ -1098,17 +1092,17 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                 else
                 {
                     swWashFold.setChecked(false);
-                }
+                }*/
 
                 //getting schooldonations
-                if(!responseObj.isNull("school_donation_id"))
+                /*if(!responseObj.isNull("school_donation_id"))
                 {
                     swDonateToSchool.setChecked(true);
                     //Toast.makeText(getApplicationContext(),"saved school id "+responseObj.getInt("school_donation_id"),Toast.LENGTH_SHORT).show();
                     schoolDonationInPreviousOrder = responseObj.getInt("school_donation_id");
-                }
+                }*/
 
-                if(!responseObj.isNull("coupon"))
+                /*if(!responseObj.isNull("coupon"))
                 {
                     showCouponDialogeOrNot = false;
                     swHaveCoupone.setChecked(true);
@@ -1117,7 +1111,7 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                     loadingCoupon = ProgressDialog.show(Other_details.this, "","Applying coupon", true, false);
                     registerUser4.register(data,routeCoupon);
                     couponString="";
-                }
+                }*/
 
 
                 if(!responseObj.isNull("starch_type"))

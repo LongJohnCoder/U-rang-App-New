@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
          again= (EditText)findViewById(R.id.again);
 
         mob = (EditText)findViewById(R.id.mob);
-        /** Phone number masking using TextWatcher */
+        /* Phone number masking using TextWatcher */
         mob.addTextChangedListener(new PhoneNumberFormattingTextWatcher()  {
             //we need to know if the user is erasing or inputing some new character
             private boolean backspacingFlag = false;
@@ -219,40 +219,43 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
 
     @Override
     public void onClick(View view) {
-        if(!email.getText().toString().equals("") && !mob.getText().toString().equals("") && !again.getText().toString().equals("") && !pass.getText().toString().equals("") && !name.getText().toString().equals(""))
-        {
+
+        String userName = name.getText().toString();
+        String userEmail = email.getText().toString();
+        String password = pass.getText().toString();
+        String confirmPassword = again.getText().toString();
+        String mobileNumber = mob.getText().toString();
+        String referralEmail = etRefEmail.getText().toString();
+
+        if (isEmpty(userName) || isEmpty(userEmail) || isEmpty(password) || isEmpty(confirmPassword) || isEmpty(mobileNumber) || isEmpty(referralEmail)) {
+            Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show();
+        } else {
             EmailValidator emailValidator = new EmailValidator();
-            if(emailValidator.validate(email.getText().toString()))
-            {
-               // smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
-                //Log.i("kingsukmajumder","sms verification code is "+smsVerificationCode);
-                //dataSms.put("to",mob.getText().toString());
-                //dataSms.put("body",smsVerificationCode);
-                //loadingSms = ProgressDialog.show(this, "","Verifying your number", true, false);
-                //registerSms.register(dataSms,routeSms);
 
-                //createSmsPopup();
+            if (emailValidator.validate(userEmail)) {
+                /* smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
+                Log.i("kingsukmajumder","sms verification code is "+smsVerificationCode);
+                dataSms.put("to",mob.getText().toString());
+                dataSms.put("body",smsVerificationCode);
+                loadingSms = ProgressDialog.show(this, "","Verifying your number", true, false);
+                registerSms.register(dataSms,routeSms);
 
-                data.put("email", email.getText().toString());
-                data.put("name", name.getText().toString());
-                data.put("personal_phone", mob.getText().toString());
-                data.put("password", pass.getText().toString());
-                data.put("conf_password", again.getText().toString());
+                createSmsPopup();*/
+
+                data.put("name", userName);
+                data.put("email", userEmail);
+                data.put("password", password);
+                data.put("conf_password", confirmPassword);
+                data.put("personal_phone", mobileNumber);
+                data.put("ref_name", referralEmail);
                 Log.i("kingsukmajumder", data.toString());
+
                 loading = ProgressDialog.show(this, "", "Please wait", true, false);
                 registerUser.register(data, route);
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
             }
-
         }
-        else
-        {
-            Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show();
-        }
-
     }
 
     /*public void createSmsPopup()
@@ -313,5 +316,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
     @Override
     public void smsReceived(String output) {
         edt.setText(output);
+    }
+
+    private boolean isEmpty(String string) {
+        return string.trim().length() <= 0;
     }
 }

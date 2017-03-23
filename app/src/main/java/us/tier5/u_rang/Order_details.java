@@ -54,7 +54,7 @@ public class Order_details extends AppCompatActivity implements AsyncResponse.Re
     Button btnDateToday;
 
     //server variable
-    HashMap<String, String> data = new HashMap<String,String>();
+    HashMap<String, String> data = new HashMap<>();
     String route = "/V1/get-user-details";
     RegisterUser registerUser = new RegisterUser("POST");
 

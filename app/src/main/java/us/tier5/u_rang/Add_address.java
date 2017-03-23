@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +32,7 @@ import java.util.Locale;
 
 import Others.GPSTracker;
 
-public class Add_address extends AppCompatActivity implements View.OnClickListener{
+public class Add_address extends AppCompatActivity implements View.OnClickListener {
     // GPSTracker class
     GPSTracker gps;
 
@@ -40,7 +42,7 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
     EditText etFlatNo;
     EditText etLandmark;
     TextView tvSaveAddress;
-    String tagName= "";
+    String tagName = "";
     ImageView ivHomeTag;
     ImageView ivOfficeTag;
     ImageView ivOtherTag;
@@ -55,7 +57,7 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
     //loading variables
     ProgressDialog loading;
 
-    public static final int MY_PERMISSION_GET_LOCATION =1;
+    public static final int MY_PERMISSION_GET_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,14 +106,14 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
                         gps = new GPSTracker(Add_address.this);
 
                         // check if GPS enabled
-                        if(gps.canGetLocation()){
+                        if (gps.canGetLocation()) {
 
                             double latitude = gps.getLatitude();
                             double longitude = gps.getLongitude();
 
                             // \n is for new line
                             //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                        }else{
+                        } else {
                             // can't get location
                             // GPS or Network is not enabled
                             // Ask user to enable GPS/network in settings
@@ -130,33 +132,28 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
                         // app-defined int constant. The callback method gets the
                         // result of the request.
                     }
-                }
-                else
-                {
+                } else {
                     // create class object
                     gps = new GPSTracker(Add_address.this);
 
                     // check if GPS enabled
-                    if(gps.canGetLocation()){
+                    if (gps.canGetLocation()) {
 
                         double latitude = gps.getLatitude();
                         double longitude = gps.getLongitude();
 
                         // \n is for new line
                         //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                        HashMap<String, String> address = getAddress(latitude,longitude);
-                        if(!address.equals(null)||!address.equals(""))
-                        {
+                        HashMap<String, String> address = getAddress(latitude, longitude);
+                        if (!address.equals(null) || !address.equals("")) {
                             etLocality.setText(address.get("addressLine"));
                             etCity.setText(address.get("city"));
                             etState.setText(address.get("state"));
                             etZipCode.setText(address.get("zipCode"));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Cannot get your address currently,Enter manually", Toast.LENGTH_LONG).show();
                         }
-                        else
-                        {
-                            Toast.makeText(getApplicationContext(),"Cannot get your address currently,Enter manually",Toast.LENGTH_LONG).show();
-                        }
-                    }else{
+                    } else {
                         // can't get location
                         // GPS or Network is not enabled
                         // Ask user to enable GPS/network in settings
@@ -204,7 +201,8 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSION_GET_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -217,176 +215,141 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
                     gps = new GPSTracker(Add_address.this);
 
                     // check if GPS enabled
-                    if(gps.canGetLocation()){
-
+                    if (gps.canGetLocation()) {
                         double latitude = gps.getLatitude();
                         double longitude = gps.getLongitude();
 
-                        // \n is for new line
-                        //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                        HashMap<String, String> address = getAddress(latitude,longitude);
-                        if(!address.equals(null)||!address.equals(""))
-                        {
+                        HashMap<String, String> address = getAddress(latitude, longitude);
+                        if (!address.isEmpty()) {
                             etLocality.setText(address.get("addressLine"));
                             etCity.setText(address.get("city"));
                             etState.setText(address.get("state"));
                             etZipCode.setText(address.get("zipCode"));
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Cannot get your address currently,Enter manually", Toast.LENGTH_LONG).show();
                         }
-                        else
-                        {
-                            Toast.makeText(getApplicationContext(),"Cannot get your address currently,Enter manually",Toast.LENGTH_LONG).show();
-                        }
-                    }else{
+                    } else {
                         // can't get location
                         // GPS or Network is not enabled
                         // Ask user to enable GPS/network in settings
                         gps.showSettingsAlert();
                     }
-
                 } else {
-
-                    Toast.makeText(getApplicationContext(),"You have to provide permission to show location",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "You have to provide permission to show location", Toast.LENGTH_SHORT).show();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-                return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
     }
 
-    public HashMap<String, String> getAddress(double latitude, double longitude)
-    {
+    public HashMap<String, String> getAddress(double latitude, double longitude) {
         Geocoder geocoder;
-        HashMap<String, String> result = new HashMap<>();
-        List<Address> addresses;
+        HashMap<String, String> addressMap = new HashMap<>();
+        List<Address> addressList;
         geocoder = new Geocoder(this, Locale.getDefault());
 
-        try{
-            addresses = geocoder.getFromLocation(
+        try {
+            addressList = geocoder.getFromLocation(
                     latitude, longitude, 1);
-            Log.d("ADDRESS_ARRAY", addresses.toString());
-            if (addresses != null && addresses.size() > 0) {
-                Address address = addresses.get(0);
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
-                    if(!address.getAddressLine(i).equals(null))
-                    {
-                        sb.append(address.getAddressLine(i)).append("\b");
-                    }
-                }
-                result.put("addressLine", sb.toString());
-                result.put("city", address.getLocality());
-                result.put("state", address.getAdminArea());
-                result.put("zipCode", address.getPostalCode());
+            Log.i("ADDRESS_ARRAY", addressList.toString());
+            if (!addressList.isEmpty() && addressList.size() > 0) {
+                Address address = addressList.get(0);
+                addressMap.put("addressLine", address.getAddressLine(0));
+                addressMap.put("city", address.getLocality());
+                addressMap.put("state", address.getAdminArea());
+                addressMap.put("zipCode", address.getPostalCode());
             }
-            return result;
+            return addressMap;
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Cannot get your address currently,Enter manually", Toast.LENGTH_LONG).show();
         }
-        catch (Exception e)
-        {
-            Toast.makeText(getApplicationContext(),"Cannot get your address currently,Enter manually",Toast.LENGTH_LONG).show();
-        }
-        return result;
+
+        return addressMap;
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View view) {
+        String apartmentNo = etFlatNo.getText().toString();
+        String addressLine = etLocality.getText().toString();
+        String city = etCity.getText().toString();
+        String state = etState.getText().toString();
+        String zipCode = etZipCode.getText().toString();
+        String landmark = etLandmark.getText().toString();
 
-        if(!etLocality.getText().toString().equals("") && !etCity.getText().toString().equals("") && !etState.getText().toString().equals("") && !etZipCode.getText().toString().equals(""))
-        {
-            if(!tagName.equals(""))
-            {
+        if (isEmpty(apartmentNo) || isEmpty(addressLine) || isEmpty(city) || isEmpty(state) || isEmpty(zipCode)) {
+            Snackbar.make(view, "All mandatory fields are required", Snackbar.LENGTH_LONG).show();
+        } else {
+            if (!tagName.equals("")) {
                 SharedPreferences prefs = getSharedPreferences("U-rang", MODE_PRIVATE);
                 String address_json = prefs.getString("address_json", "");
-                if(!address_json.isEmpty())
-                {
-                    //Toast.makeText(getApplicationContext(),"not empty append new",Toast.LENGTH_SHORT).show();
-                    try
-                    {
-                        JSONArray jsonArray = new JSONArray(address_json);
 
+                if (!address_json.isEmpty()) {
+                    //Toast.makeText(getApplicationContext(),"not empty append new",Toast.LENGTH_SHORT).show();
+                    try {
+                        JSONArray jsonArray = new JSONArray(address_json);
                         JSONObject jsonObject = new JSONObject();
 
-                        jsonObject.put("index",jsonArray.length()+1);
-                        jsonObject.put("user_id",Integer.toString(user_id));
-                        jsonObject.put("tagname",tagName);
-                        jsonObject.put("flat",etFlatNo.getText().toString());
-                        jsonObject.put("landmark",etLandmark.getText().toString());
-                        jsonObject.put("locality",etLocality.getText().toString()+","+etCity.getText().toString()+","+etState.getText().toString()+","+etZipCode.getText().toString());
+                        jsonObject.put("index", jsonArray.length() + 1);
+                        jsonObject.put("user_id", Integer.toString(user_id));
+                        jsonObject.put("tagname", tagName);
+                        jsonObject.put("flat", apartmentNo);
+                        jsonObject.put("landmark", landmark);
+                        jsonObject.put("locality", addressLine + "," + city + "," + state + "," + zipCode);
 
                         jsonArray.put(jsonObject);
 
                         SharedPreferences.Editor editor = getSharedPreferences("U-rang", MODE_PRIVATE).edit();
                         editor.putString("address_json", jsonArray.toString());
-                        if(editor.commit())
-                        {
-                            Toast.makeText(getApplicationContext(),"New address added successfully.",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Add_address.this,Order_details.class);
+                        if (editor.commit()) {
+                            Toast.makeText(getApplicationContext(), "New address added successfully.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Add_address.this, Order_details.class);
                             startActivity(intent);
-                        }
-                        else
-                        {
-                            Toast.makeText(getApplicationContext(),"Error while adding new address!",Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Error while adding new address!", Toast.LENGTH_SHORT).show();
                         }
 
-                        Log.i("kingsukmajumder",jsonArray.toString());
+                        Log.i("kingsukmajumder", jsonArray.toString());
+                    } catch (Exception e) {
+                        Log.i("kingsukmajumder", e.toString());
+                        Toast.makeText(getApplicationContext(), "Error while saving the address!", Toast.LENGTH_SHORT).show();
                     }
-                    catch (Exception e)
-                    {
-                        Log.i("kingsukmajumder",e.toString());
-                        Toast.makeText(getApplicationContext(),"Error while saving the address!",Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-                else
-                {
+                } else {
                     JSONArray jsonArray = new JSONArray();
                     JSONObject jsonObject = new JSONObject();
-                    try
-                    {
-                        jsonObject.put("index",1);
-                        jsonObject.put("user_id",Integer.toString(user_id));
-                        jsonObject.put("tagname",tagName);
-                        jsonObject.put("flat",etFlatNo.getText().toString());
-                        jsonObject.put("landmark",etLandmark.getText().toString());
-                        jsonObject.put("locality",etLocality.getText().toString()+","+etCity.getText().toString()+","+etState.getText().toString()+","+etZipCode.getText().toString());
+                    try {
+                        jsonObject.put("index", 1);
+                        jsonObject.put("user_id", Integer.toString(user_id));
+                        jsonObject.put("tagname", tagName);
+                        jsonObject.put("flat", etFlatNo.getText().toString());
+                        jsonObject.put("landmark", etLandmark.getText().toString());
+                        jsonObject.put("locality", addressLine + "," + city + "," + state + "," + zipCode);
 
                         jsonArray.put(jsonObject);
 
                         SharedPreferences.Editor editor = getSharedPreferences("U-rang", MODE_PRIVATE).edit();
                         editor.putString("address_json", jsonArray.toString());
-                        if(editor.commit())
-                        {
-                            Toast.makeText(getApplicationContext(),"New address added successfully.",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Add_address.this,Order_details.class);
+                        if (editor.commit()) {
+                            Toast.makeText(getApplicationContext(), "New address added successfully.", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Add_address.this, Order_details.class);
                             startActivity(intent);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Error while adding new address!", Toast.LENGTH_SHORT).show();
                         }
-                        else
-                        {
-                            Toast.makeText(getApplicationContext(),"Error while adding new address!",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Log.i("kingsukmajumder",e.toString());
-                        Toast.makeText(getApplicationContext(),"Error while saving the new address!",Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Log.i("kingsukmajumder", e.toString());
+                        Toast.makeText(getApplicationContext(), "Error while saving the new address!", Toast.LENGTH_SHORT).show();
                     }
                 }
+            } else {
+                Snackbar.make(view, "Select an address type", Snackbar.LENGTH_LONG).show();
             }
-            else
-            {
-                Toast.makeText(getApplicationContext(),"Select a address type!",Toast.LENGTH_SHORT).show();
-            }
-
         }
-        else
-        {
-            Toast.makeText(getApplicationContext(),"All mandatory fields are required!",Toast.LENGTH_SHORT).show();
-        }
+    }
 
-
-
+    private boolean isEmpty(String string) {
+        return string.trim().length() <= 0;
     }
 }
