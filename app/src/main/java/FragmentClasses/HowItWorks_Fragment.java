@@ -1,16 +1,29 @@
 package FragmentClasses;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import HelperClasses.AsyncResponse;
+import HelperClasses.RegisterUser;
 import HelperClasses.UserConstants;
 import us.tier5.u_rang.R;
+import us.tier5.u_rang.Splash;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,7 +33,12 @@ import us.tier5.u_rang.R;
  * Use the {@link HowItWorks_Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HowItWorks_Fragment extends Fragment {
+public class HowItWorks_Fragment extends Fragment implements AsyncResponse.Response {
+
+    //server variable
+    HashMap<String, String> data = new HashMap<String,String>();
+    String route = "/V1/getProgileDetails";
+    RegisterUser registerUser = new RegisterUser("POST");
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -73,6 +91,16 @@ public class HowItWorks_Fragment extends Fragment {
             mListener.onFragmentInteraction("How it works");
         }
 
+        registerUser.delegate = this;
+
+        SharedPreferences prefs = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+        int user_id = prefs.getInt("user_id", 0);
+
+        //Toast.makeText(getContext(),""+user_id,Toast.LENGTH_SHORT).show();
+        data.put("user_id",Integer.toString(user_id));
+
+        registerUser.register(data, route);
+
         TextView howItWorksText = (TextView) view.findViewById(R.id.howItWorksText);
         howItWorksText.setText(UserConstants.HOW_IT_WORKS);
 
@@ -119,5 +147,29 @@ public class HowItWorks_Fragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(String title);
+    }
+
+    @Override
+    public void processFinish(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.v("PROFILE_STATUS:", jsonObject.toString());
+            if (jsonObject.getInt("status_code") == 301) {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e)
+        {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
     }
 }

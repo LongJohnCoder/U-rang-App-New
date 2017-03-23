@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,11 +22,14 @@ import android.widget.Toast;
 import com.android.datetimepicker.date.DatePickerDialog;
 import com.android.datetimepicker.time.RadialPickerLayout;
 import com.android.datetimepicker.time.TimePickerDialog;
+import com.facebook.login.LoginManager;
 import com.roger.gifloadinglibrary.GifLoadingView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,11 +38,13 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import HelperClasses.AsyncResponse;
+import HelperClasses.AsyncResponse2;
 import HelperClasses.CheckNetwork;
 import HelperClasses.RegisterUser;
+import HelperClasses.RegisterUser2;
 import Others.SaveUserData;
 
-public class Order_details extends AppCompatActivity implements AsyncResponse.Response,CompoundButton.OnCheckedChangeListener,View.OnClickListener,DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateChangedListener{
+public class Order_details extends AppCompatActivity implements AsyncResponse.Response, AsyncResponse2.Response2, CompoundButton.OnCheckedChangeListener,View.OnClickListener,DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateChangedListener{
     //page variables
     LinearLayout parentLL;
     ArrayList<RadioButton> radioArray = new ArrayList<>();
@@ -56,7 +62,9 @@ public class Order_details extends AppCompatActivity implements AsyncResponse.Re
     //server variable
     HashMap<String, String> data = new HashMap<>();
     String route = "/V1/get-user-details";
+    String routeProfileDetails = "/V1/getProgileDetails";
     RegisterUser registerUser = new RegisterUser("POST");
+    RegisterUser2 registerUser2 = new RegisterUser2("POST");
 
     //user variables
     int user_id;
@@ -89,6 +97,7 @@ public class Order_details extends AppCompatActivity implements AsyncResponse.Re
         //Toast.makeText(getApplicationContext(),data_total.toString(),Toast.LENGTH_SHORT).show();
 
         registerUser.delegate = this;
+        registerUser2.delegate = this;
         mGifLoadingView = new GifLoadingView();
         mGifLoadingView.setImageResource(R.drawable.loading_3);
 
@@ -121,6 +130,7 @@ public class Order_details extends AppCompatActivity implements AsyncResponse.Re
         //Toast.makeText(getContext(),""+user_id,Toast.LENGTH_SHORT).show();
         data.put("user_id",Integer.toString(user_id));
 
+        registerUser2.register(data, routeProfileDetails);
 
         //calender and date picker variables
         calendar = Calendar.getInstance();
@@ -247,7 +257,9 @@ public class Order_details extends AppCompatActivity implements AsyncResponse.Re
     @Override
     public void processFinish(String output) {
         Log.i("kingsukmajumder",output);
-        mGifLoadingView.dismiss();
+        if (mGifLoadingView != null) {
+            mGifLoadingView.dismiss();
+        }
         try
         {
             JSONObject jsonObject = new JSONObject(output);
@@ -678,6 +690,7 @@ public class Order_details extends AppCompatActivity implements AsyncResponse.Re
 
     @Override
     public void onClick(View v) {
+        registerUser2.register(data, routeProfileDetails);
         changeIntent();
 
     }
@@ -721,5 +734,59 @@ public class Order_details extends AppCompatActivity implements AsyncResponse.Re
     public void onBackPressed() {
         Intent intent = new Intent(Order_details.this,Dashboard.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void processFinish2(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.v("PROFILE_STATUS:", jsonObject.toString());
+            if (jsonObject.getInt("status_code") == 301) {
+                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getApplicationContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e)
+        {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        invokeFragmentManagerNoteStateNotSaved();
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void invokeFragmentManagerNoteStateNotSaved() {
+        /**
+         * For post-Honeycomb devices
+         */
+        try {
+            Class cls = getClass();
+            do {
+                cls = cls.getSuperclass();
+            } while (!"Activity".equals(cls.getSimpleName()));
+            Field fragmentMgrField = cls.getDeclaredField("mFragments");
+            fragmentMgrField.setAccessible(true);
+
+            Object fragmentMgr = fragmentMgrField.get(this);
+            cls = fragmentMgr.getClass();
+
+            Method noteStateNotSavedMethod = cls.getDeclaredMethod("noteStateNotSaved", new Class[] {});
+            noteStateNotSavedMethod.invoke(fragmentMgr, new Object[] {});
+            Log.d("DLOutState", "Successful call for noteStateNotSaved!!!");
+        } catch (Exception ex) {
+            Log.e("DLOutState", "Exception on worka FM.noteStateNotSaved", ex);
+        }
     }
 }

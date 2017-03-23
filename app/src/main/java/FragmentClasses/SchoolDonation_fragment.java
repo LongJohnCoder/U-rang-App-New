@@ -2,6 +2,7 @@ package FragmentClasses;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.facebook.login.LoginManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,10 +36,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import HelperClasses.AsyncResponse;
+import HelperClasses.AsyncResponse2;
 import HelperClasses.CheckNetwork;
 import HelperClasses.RegisterUser;
+import HelperClasses.RegisterUser2;
 import HelperClasses.UserConstants;
 import us.tier5.u_rang.R;
+import us.tier5.u_rang.Splash;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,7 +52,7 @@ import us.tier5.u_rang.R;
  * Use the {@link SchoolDonation_fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SchoolDonation_fragment extends Fragment implements AsyncResponse.Response,AdapterView.OnItemSelectedListener,View.OnClickListener{
+public class SchoolDonation_fragment extends Fragment implements AsyncResponse.Response, AsyncResponse2.Response2, AdapterView.OnItemSelectedListener,View.OnClickListener{
 
     //page variables
     LinearLayout LLSchoolList;
@@ -63,7 +68,9 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
     //server variable
     HashMap<String, String> data = new HashMap<String,String>();
     String route = "/V1/get-school-preferences";
+    String routeProfileDetails = "/V1/getProgileDetails";
     RegisterUser registerUser = new RegisterUser("POST");
+    RegisterUser2 registerUser2 = new RegisterUser2("POST");
 
     //loading
     ProgressDialog loadingAddSchool;
@@ -120,6 +127,7 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
         View fragView = inflater.inflate(R.layout.fragment_school_donation_fragment, container, false);
 
         registerUser.delegate = this;
+        registerUser2.delegate = this;
         mysavedInstance = savedInstanceState;
 
         LLSchoolList = (LinearLayout) fragView.findViewById(R.id.LLSchoolList);
@@ -132,11 +140,9 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
         //Toast.makeText(getContext(),""+user_id,Toast.LENGTH_SHORT).show();
         data.put("user_id",Integer.toString(user_id));
 
-
-
         if(CheckNetwork.isInternetAvailable(getContext())) //returns true if internet available
         {
-
+            registerUser2.register(data, routeProfileDetails);
             registerUser.register(data,route);
         }
         else
@@ -344,6 +350,7 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
 
     @Override
     public void onClick(View v) {
+        registerUser2.register(data, routeProfileDetails);
         if(selectedSchoolId==0)
         {
             Toast.makeText(getContext(),"Select a school first!",Toast.LENGTH_SHORT).show();
@@ -395,5 +402,29 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void processFinish2(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.v("PROFILE_STATUS:", jsonObject.toString());
+            if (jsonObject.getInt("status_code") == 301) {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e)
+        {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
     }
 }

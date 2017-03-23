@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.roger.gifloadinglibrary.GifLoadingView;
 
 import org.json.JSONArray;
@@ -24,11 +26,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import HelperClasses.AsyncResponse;
+import HelperClasses.AsyncResponse2;
 import HelperClasses.CheckNetwork;
 import HelperClasses.RegisterUser;
+import HelperClasses.RegisterUser2;
 import Others.SaveUserData;
 import us.tier5.u_rang.Order_details;
 import us.tier5.u_rang.R;
+import us.tier5.u_rang.Splash;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,7 +43,7 @@ import us.tier5.u_rang.R;
  * Use the {@link PriceList_fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PriceList_fragment extends Fragment implements AsyncResponse.Response,View.OnClickListener{
+public class PriceList_fragment extends Fragment implements AsyncResponse.Response, AsyncResponse2.Response2, View.OnClickListener{
     //page variables
     LinearLayout llparentPrice;
     TextView tvTotalCount;
@@ -53,7 +58,9 @@ public class PriceList_fragment extends Fragment implements AsyncResponse.Respon
     //server variable
     HashMap<String, String> data = new HashMap<String,String>();
     String route = "/V1/get-prices";
+    String routeProfileDetails = "/V1/getProgileDetails";
     RegisterUser registerUser = new RegisterUser("POST");
+    RegisterUser2 registerUser2 = new RegisterUser2("POST");
 
     //gif loader variables
 
@@ -116,7 +123,16 @@ public class PriceList_fragment extends Fragment implements AsyncResponse.Respon
         //server and loader variable initialization
         mysavedInstance = savedInstanceState;
         registerUser.delegate = this;
+        registerUser2.delegate = this;
 
+
+        SharedPreferences prefs = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+        int user_id = prefs.getInt("user_id", 0);
+
+        //Toast.makeText(getContext(),""+user_id,Toast.LENGTH_SHORT).show();
+        data.put("user_id",Integer.toString(user_id));
+
+        registerUser2.register(data, routeProfileDetails);
 
 
         manager = ((Activity) getContext()).getFragmentManager();
@@ -329,5 +345,29 @@ public class PriceList_fragment extends Fragment implements AsyncResponse.Respon
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void processFinish2(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.v("PROFILE_STATUS:", jsonObject.toString());
+            if (jsonObject.getInt("status_code") == 301) {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e)
+        {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
     }
 }

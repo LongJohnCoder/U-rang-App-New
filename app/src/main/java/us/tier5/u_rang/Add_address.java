@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,9 +32,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import HelperClasses.AsyncResponse;
+import HelperClasses.RegisterUser;
 import Others.GPSTracker;
 
-public class Add_address extends AppCompatActivity implements View.OnClickListener {
+public class Add_address extends AppCompatActivity implements View.OnClickListener, AsyncResponse.Response {
     // GPSTracker class
     GPSTracker gps;
 
@@ -57,6 +61,11 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
     //loading variables
     ProgressDialog loading;
 
+    //server variable
+    HashMap<String, String> data = new HashMap<>();
+    String routeProfileDetails = "/V1/getProgileDetails";
+    RegisterUser registerUser = new RegisterUser("POST");
+
     public static final int MY_PERMISSION_GET_LOCATION = 1;
 
     @Override
@@ -66,11 +75,17 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        registerUser.delegate = this;
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
         user_id = prefs.getInt("user_id", 0);
+
+        data.put("user_id",Integer.toString(user_id));
+
+        registerUser.register(data, routeProfileDetails);
 
         etLocality = (EditText) findViewById(R.id.etLocality);
         etFlatNo = (EditText) findViewById(R.id.etFlatNo);
@@ -272,6 +287,7 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
+        registerUser.register(data, routeProfileDetails);
         String apartmentNo = etFlatNo.getText().toString();
         String addressLine = etLocality.getText().toString();
         String city = etCity.getText().toString();
@@ -352,4 +368,29 @@ public class Add_address extends AppCompatActivity implements View.OnClickListen
     private boolean isEmpty(String string) {
         return string.trim().length() <= 0;
     }
+
+    @Override
+    public void processFinish(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.v("PROFILE_STATUS:", jsonObject.toString());
+            if (jsonObject.getInt("status_code") == 301) {
+                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getApplicationContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e)
+        {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
+    }
+
 }

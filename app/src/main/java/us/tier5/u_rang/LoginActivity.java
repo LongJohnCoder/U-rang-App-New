@@ -384,7 +384,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             {
                 Snackbar.make(this.findViewById(android.R.id.content), jsonObject.getString("message"), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_SHORT).show();
             }
 
         }

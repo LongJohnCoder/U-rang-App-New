@@ -93,6 +93,13 @@ public class Contact_fragment extends Fragment implements AsyncResponse.Response
         View fragView = inflater.inflate(R.layout.fragment_contact_fragment, container, false);
 
         registerUser.delegate = this;
+
+        SharedPreferences prefs = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+        int user_id = prefs.getInt("user_id", 0);
+
+        //Toast.makeText(getContext(),""+user_id,Toast.LENGTH_SHORT).show();
+        data.put("user_id",Integer.toString(user_id));
+
         registerUser.register(data, route);
 
         ImageView ivEmailContact = (ImageView) fragView.findViewById(R.id.ivEmailContact);

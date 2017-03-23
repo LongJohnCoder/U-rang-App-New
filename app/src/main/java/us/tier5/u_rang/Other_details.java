@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.cooltechworks.creditcarddesign.CardEditActivity;
 import com.cooltechworks.creditcarddesign.CreditCardUtils;
+import com.facebook.login.LoginManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,15 +45,18 @@ import HelperClasses.AsyncResponse2;
 import HelperClasses.AsyncResponse3;
 import HelperClasses.AsyncResponse4;
 import HelperClasses.AsyncResponse5;
+import HelperClasses.AsyncResponse6;
 import HelperClasses.RegisterUser;
 import HelperClasses.RegisterUser2;
 import HelperClasses.RegisterUser3;
 import HelperClasses.RegisterUser4;
 import HelperClasses.RegisterUser5;
+import HelperClasses.RegisterUser6;
 import Others.SaveUserData;
 
-public class Other_details extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener,TimePickerDialog.OnTimeSetListener,AdapterView.OnItemSelectedListener,View.OnClickListener, AsyncResponse.Response, AsyncResponse2.Response2 , AsyncResponse3.Response3, AsyncResponse4.Response4, AsyncResponse5.Response5{
+public class Other_details extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener,TimePickerDialog.OnTimeSetListener,AdapterView.OnItemSelectedListener,View.OnClickListener, AsyncResponse.Response, AsyncResponse2.Response2 , AsyncResponse3.Response3, AsyncResponse4.Response4, AsyncResponse5.Response5, AsyncResponse6.Response6{
 
+    boolean preventPickup = false;
     //page variable
     LinearLayout PickUpTimeLL,ReturnPickUpTimeLL;
     Switch swDoorman;
@@ -102,6 +106,9 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
     String routeGetPreviousOrderDetails = "/V1/lastPickup";
     RegisterUser5 registerUser5 = new RegisterUser5("POST");
 
+    String routeProfileDetails = "/V1/getProgileDetails";
+    RegisterUser6 registerUser6 = new RegisterUser6("POST");
+
     //timer formatter
     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
     int First24Hour;
@@ -137,8 +144,7 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         registerUser3.delegate = this;
         registerUser4.delegate = this;
         registerUser5.delegate = this;
-
-
+        registerUser6.delegate = this;
 
 
         //user data variable initialization
@@ -215,6 +221,9 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         SaveUserData.data_total.put("pay_method","1");
         SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
         int user_id = prefs.getInt("user_id", 0);
+
+        data.put("user_id",Integer.toString(user_id));
+        registerUser6.register(data, routeProfileDetails);
 
         //Toast.makeText(getContext(),""+user_id,Toast.LENGTH_SHORT).show();
         dataSchool.put("user_id",Integer.toString(user_id));
@@ -732,59 +741,47 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
 
     @Override
     public void onClick(View v) {
-        if(!couponString.equals(""))
-        {
-            SaveUserData.data_total.put("coupon",couponString);
-        }
-        SaveUserData.data_total.put("time_frame_start",startTimeFrame);
-        SaveUserData.data_total.put("time_frame_end",endTimeFrame);
-        SaveUserData.data_total.put("return_time_frame_end",returnEndTimeFrame);
-        SaveUserData.data_total.put("return_time_frame_start",returnStartTimeFrame);
-        Log.i("kingsukmajumder",SaveUserData.data_total.toString());
-        if(!SaveUserData.data_total.get("pay_method").equals(""))
-        {
-            if(endTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
-            {
-                Toast.makeText(getApplicationContext(),"You have to select a end time frame!",Toast.LENGTH_SHORT).show();
+        registerUser6.register(data, routeProfileDetails);
+        if (!preventPickup) {
+            if (!couponString.equals("")) {
+                SaveUserData.data_total.put("coupon", couponString);
             }
-            else if(returnEndTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
-            {
-                Toast.makeText(getApplicationContext(),"You have to select a Return end time frame!",Toast.LENGTH_SHORT).show();
-            }
-            else if(returnStartTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0"))
-            {
-                Toast.makeText(getApplicationContext(),"You have to select a Return Start time frame!",Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                if(SaveUserData.data_total.get("pay_method").equals("1"))
-                {
-                    if(cardDetailsareThere)
-                    {
-                        Log.i("kingsukmajumder",SaveUserData.data_total.toString());
-                        loadingPostingOrder = ProgressDialog.show(Other_details.this, "","Placing order", true, false);
-                        registerUser.register(SaveUserData.data_total,route);
+            SaveUserData.data_total.put("time_frame_start", startTimeFrame);
+            SaveUserData.data_total.put("time_frame_end", endTimeFrame);
+            SaveUserData.data_total.put("return_time_frame_end", returnEndTimeFrame);
+            SaveUserData.data_total.put("return_time_frame_start", returnStartTimeFrame);
+            Log.i("kingsukmajumder", SaveUserData.data_total.toString());
+            if (!SaveUserData.data_total.get("pay_method").equals("")) {
+                if (endTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
+                    Toast.makeText(getApplicationContext(), "You have to select a end time frame!", Toast.LENGTH_SHORT).show();
+                } else if (returnEndTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
+                    Toast.makeText(getApplicationContext(), "You have to select a Return end time frame!", Toast.LENGTH_SHORT).show();
+                } else if (returnStartTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
+                    Toast.makeText(getApplicationContext(), "You have to select a Return Start time frame!", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (SaveUserData.data_total.get("pay_method").equals("1")) {
+                        if (cardDetailsareThere) {
+                            Log.i("kingsukmajumder", SaveUserData.data_total.toString());
+                            if (!preventPickup) {
+                                loadingPostingOrder = ProgressDialog.show(Other_details.this, "", "Placing order", true, false);
+                                registerUser.register(SaveUserData.data_total, route);
+                            }
+                        } else {
+                            final int GET_NEW_CARD = 2;
+                            Toast.makeText(this, "Please enter the card details", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(Other_details.this, CardEditActivity.class);
+                            startActivityForResult(intent, GET_NEW_CARD);
+                        }
+                    } else {
+                        loadingPostingOrder = ProgressDialog.show(Other_details.this, "", "Placing order", true, false);
+                        registerUser.register(SaveUserData.data_total, route);
                     }
-                    else
-                    {
-                        final int GET_NEW_CARD = 2;
-                        Toast.makeText(this, "Please enter the card details", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(Other_details.this, CardEditActivity.class);
-                        startActivityForResult(intent,GET_NEW_CARD);
-                    }
-                }
-                else
-                {
-                    loadingPostingOrder = ProgressDialog.show(Other_details.this, "","Placing order", true, false);
-                    registerUser.register(SaveUserData.data_total,route);
+
                 }
 
+            } else {
+                Toast.makeText(getApplicationContext(), "Select a payment method!", Toast.LENGTH_SHORT).show();
             }
-
-        }
-        else
-        {
-            Toast.makeText(getApplicationContext(),"Select a payment method!",Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -1153,6 +1150,32 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         }
 
         loadingPreviousOrder.dismiss();
+    }
+
+    @Override
+    public void processFinish6(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.v("PROFILE_STATUS:", jsonObject.toString());
+            if (jsonObject.getInt("status_code") == 301) {
+                preventPickup = true;
+                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getApplicationContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else {
+                preventPickup = false;
+                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e)
+        {
+            //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
+            Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
     }
 }
 

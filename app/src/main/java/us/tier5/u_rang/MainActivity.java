@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse.Res
         String mobileNumber = mob.getText().toString();
         String referralEmail = etRefEmail.getText().toString();
 
-        if (isEmpty(userName) || isEmpty(userEmail) || isEmpty(password) || isEmpty(confirmPassword) || isEmpty(mobileNumber) || isEmpty(referralEmail)) {
+        if (isEmpty(userName) || isEmpty(userEmail) || isEmpty(password) || isEmpty(confirmPassword) || isEmpty(mobileNumber)) {
             Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show();
         } else {
             EmailValidator emailValidator = new EmailValidator();

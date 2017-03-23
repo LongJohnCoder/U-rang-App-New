@@ -18,6 +18,9 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import FragmentClasses.Contact_fragment;
 import FragmentClasses.HowItWorks_Fragment;
 import FragmentClasses.Orders_fragment;
@@ -186,5 +189,34 @@ public class DashboardNew extends AppCompatActivity
         getSupportActionBar().setTitle(title);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        invokeFragmentManagerNoteStateNotSaved();
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private void invokeFragmentManagerNoteStateNotSaved() {
+        /**
+         * For post-Honeycomb devices
+         */
+        try {
+            Class cls = getClass();
+            do {
+                cls = cls.getSuperclass();
+            } while (!"Activity".equals(cls.getSimpleName()));
+            Field fragmentMgrField = cls.getDeclaredField("mFragments");
+            fragmentMgrField.setAccessible(true);
+
+            Object fragmentMgr = fragmentMgrField.get(this);
+            cls = fragmentMgr.getClass();
+
+            Method noteStateNotSavedMethod = cls.getDeclaredMethod("noteStateNotSaved", new Class[] {});
+            noteStateNotSavedMethod.invoke(fragmentMgr, new Object[] {});
+            Log.d("DLOutState", "Successful call for noteStateNotSaved!!!");
+        } catch (Exception ex) {
+            Log.e("DLOutState", "Exception on worka FM.noteStateNotSaved", ex);
+        }
+    }
 }
 

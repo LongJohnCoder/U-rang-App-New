@@ -272,6 +272,9 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
 
                 JSONObject userDetails = new JSONObject(response.getString("user_details"));
 
+                if (!userDetails.getString("name").equals("")) {
+                    name.setText(userDetails.getString("name"));
+                }
                 if(!userDetails.getString("personal_ph").equals("null"))
                 {
                     personal_ph.setText(userDetails.getString("personal_ph"));
@@ -292,7 +295,6 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
                     officePhone.setText(Integer.toString(userDetails.getInt("off_phone")));
                 }
 
-                name.setText(userDetails.getString("name"));
                 specialInstruction.setText(userDetails.getString("spcl_instructions"));
                 drivingInstruction.setText(userDetails.getString("driving_instructions"));
 
@@ -371,6 +373,7 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
 
     @Override
     public void onClick(View v) {
+        registerUser3.register(data, route);
         if(emailValidator(email.getText().toString()) && !name.getText().toString().equals("") && !address.getText().toString().equals("") &&!personal_ph.getText().toString().equals(""))
         {
             data.put("email",email.getText().toString());
