@@ -115,6 +115,11 @@ public class PriceList_fragment extends Fragment implements AsyncResponse.Respon
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View fragView = inflater.inflate(R.layout.fragment_price_list_fragment, container, false);
+
+        if (mListener != null) {
+            mListener.onFragmentInteraction("U-Rang");
+        }
+
         llparentPrice = (LinearLayout) fragView.findViewById(R.id.llparentPrice);
         tvTotalCount = (TextView) fragView.findViewById(R.id.tvTotalCount);
         tvAllTotalPrice = (TextView) fragView.findViewById(R.id.tvAllTotalPrice);
@@ -345,6 +350,7 @@ public class PriceList_fragment extends Fragment implements AsyncResponse.Respon
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String title);
     }
 
     @Override

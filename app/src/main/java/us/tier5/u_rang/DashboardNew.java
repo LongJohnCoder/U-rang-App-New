@@ -158,6 +158,19 @@ public class DashboardNew extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.containerView, fragment).commit();
 
+        } else if (id == R.id.howItWorks) {
+            fragmentClass = HowItWorks_Fragment.class;
+            try
+            {
+                fragment = (Fragment) fragmentClass.newInstance();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.containerView, fragment).commit();
+
         } /*else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

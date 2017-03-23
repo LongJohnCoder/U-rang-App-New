@@ -126,6 +126,10 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
         // Inflate the layout for this fragment
         View fragView = inflater.inflate(R.layout.fragment_school_donation_fragment, container, false);
 
+        if (mListener != null) {
+            mListener.onFragmentInteraction("U-Rang");
+        }
+
         registerUser.delegate = this;
         registerUser2.delegate = this;
         mysavedInstance = savedInstanceState;
@@ -402,6 +406,7 @@ public class SchoolDonation_fragment extends Fragment implements AsyncResponse.R
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String title);
     }
 
     @Override

@@ -146,7 +146,7 @@ public class HowItWorks_Fragment extends Fragment implements AsyncResponse.Respo
     }
 
     public interface OnFragmentInteractionListener {
-        public void onFragmentInteraction(String title);
+        void onFragmentInteraction(String title);
     }
 
     @Override

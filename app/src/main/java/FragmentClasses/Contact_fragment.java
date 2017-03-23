@@ -92,6 +92,10 @@ public class Contact_fragment extends Fragment implements AsyncResponse.Response
         // Inflate the layout for this fragment
         View fragView = inflater.inflate(R.layout.fragment_contact_fragment, container, false);
 
+        if (mListener != null) {
+            mListener.onFragmentInteraction("U-Rang");
+        }
+
         registerUser.delegate = this;
 
         SharedPreferences prefs = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE);
@@ -167,6 +171,7 @@ public class Contact_fragment extends Fragment implements AsyncResponse.Response
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String title);
     }
 
     @Override

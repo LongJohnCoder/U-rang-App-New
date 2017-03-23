@@ -142,6 +142,9 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
         mysavedInstance = savedInstanceState;
         View fragView = inflater.inflate(R.layout.fragment_profile_fragment, container, false);
 
+        if (mListener != null) {
+            mListener.onFragmentInteraction("U-Rang");
+        }
 
         registerUser.delegate = this;
         registerUser2.delegate = this;
@@ -418,6 +421,7 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String title);
     }
 
 

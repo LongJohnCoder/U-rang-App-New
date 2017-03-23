@@ -352,7 +352,7 @@ public class Dashboard_fragment extends Fragment implements AsyncResponse.Respon
                     {
                         JSONObject firstObj = jsonArray.getJSONObject(currentIndex);
                         int orderStatus = Integer.parseInt(firstObj.getString("order_status"));
-                        final int id = firstObj.getInt("id");
+                        final int id = Integer.parseInt(firstObj.getString("pick_up_req_id"));
 
                         inflatedLayout = getLayoutInflater(mysavedInstance).inflate(R.layout.track_layout, null, false);
                         inflatedLayout.setTag(id);

@@ -57,6 +57,7 @@ public class Orders_fragment extends Fragment implements AsyncResponse.Response,
 
     //server variable
     HashMap<String, String> data = new HashMap<String,String>();
+    HashMap<String, String> dataCancel = new HashMap<>();
     String route = "/V1/order-tracker";
     String routeCancleOrder = "/V1/cancle-order";
     String routeGetProfileDetails = "/V1/getProgileDetails";
@@ -116,6 +117,9 @@ public class Orders_fragment extends Fragment implements AsyncResponse.Response,
         // Inflate the layout for this fragment
         View fragView = inflater.inflate(R.layout.fragment_orders_fragment, container, false);
 
+        if (mListener != null) {
+            mListener.onFragmentInteraction("U-Rang");
+        }
 
         llTrackStatus = (LinearLayout) fragView.findViewById(R.id.llTrackStatus);
 
@@ -198,7 +202,7 @@ public class Orders_fragment extends Fragment implements AsyncResponse.Response,
                     {
                         JSONObject currentObj = jsonArray.getJSONObject(i);
                         int orderStatus = Integer.parseInt(currentObj.getString("order_status"));
-                        final int id = currentObj.getInt("id");
+                        final int id = Integer.parseInt(currentObj.getString("pick_up_req_id"));
                         final View inflatedLayout= getLayoutInflater(mysavedInstance).inflate(R.layout.track_orders_layout, null, false);
                         inflatedLayout.setTag(id);
                         /*inflatedLayout.setOnClickListener(new View.OnClickListener() {
@@ -215,12 +219,12 @@ public class Orders_fragment extends Fragment implements AsyncResponse.Response,
                         TextView tvCancle = (TextView) inflatedLayout.findViewById(R.id.tvCancle);
                         tvCancle.setTag(id);
                         tvCancle.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //Toast.makeText(getContext(),"cancle Order"+inflatedLayout.getTag(),Toast.LENGTH_SHORT).show();
-                            data.put("pick_up_id",String.valueOf(id));
-                            registerUser2.register(data,routeCancleOrder);
-                        }
+                            @Override
+                            public void onClick(View v) {
+                                Log.i("CANCEL_ORDER_ID", String.valueOf(id));
+                                dataCancel.put("pick_up_id",String.valueOf(id));
+                                registerUser2.register(dataCancel, routeCancleOrder);
+                            }
                         });
                         tvOrderId.setText("Order ID: "+currentObj.getString("pick_up_req_id"));
                         if(orderStatus==1)
@@ -288,7 +292,7 @@ public class Orders_fragment extends Fragment implements AsyncResponse.Response,
 
     @Override
     public void processFinish2(String output) {
-        Log.i("kingsukmajumder",output);
+        Log.i("CANCEL_ORDER",output);
         try
         {
             JSONObject jsonObject = new JSONObject(output);
@@ -348,5 +352,6 @@ public class Orders_fragment extends Fragment implements AsyncResponse.Response,
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String title);
     }
 }

@@ -793,6 +793,7 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         loadingPostingOrder.dismiss();
         try
         {
+            registerUser6.register(data, routeProfileDetails);
             JSONObject jsonObject = new JSONObject(output);
             if(jsonObject.getBoolean("status"))
             {
