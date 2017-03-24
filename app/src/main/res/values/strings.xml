@@ -103,7 +103,7 @@
     <string name="title_activity_forgot_password">Forgot Password</string>
     <string name="enter_address_here">Enter Address Here</string>
     <string name="registered_address">Registered Address</string>
-    <string name="maiil_email_com">maiil@email.com</string>
+    <string name="enter_email_here">Enter Email Here</string>
     <string name="email">Email</string>
     <string name="enter_number_here">Enter Number Here</string>
 

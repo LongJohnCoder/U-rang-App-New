@@ -19,17 +19,20 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
 import HelperClasses.AsyncResponse;
 import HelperClasses.AsyncResponse6;
+import HelperClasses.AsyncResponse7;
 import HelperClasses.RegisterUser;
 import HelperClasses.RegisterUser6;
+import HelperClasses.RegisterUser7;
 import Others.SaveUserData;
 
-public class PickUpOptional extends AppCompatActivity implements View.OnClickListener, AsyncResponse.Response, AsyncResponse6.Response6 {
+public class PickUpOptional extends AppCompatActivity implements View.OnClickListener, AsyncResponse.Response, AsyncResponse6.Response6, AsyncResponse7.Response7 {
 
     boolean preventPickup = false;
     //page variable
@@ -53,6 +56,9 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
     RegisterUser registerUser = new RegisterUser("POST");
     RegisterUser6 registerUser6 = new RegisterUser6("POST");
 
+    String routeUpdateLastPickupAddress = "/V1/updateProfileAddress";
+    RegisterUser7 registerUser7 = new RegisterUser7("POST");
+
     //loading variables
     ProgressDialog loadingPlaceOrder;
 
@@ -67,6 +73,7 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
 
         registerUser.delegate = this;
         registerUser6.delegate = this;
+        registerUser7.delegate = this;
 
 
         SaveUserData.data_total.put("pay_method","1");
@@ -278,6 +285,18 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
         SaveUserData.data_total.put("driving_ins",etDrivingInstruction.getText().toString());
         Log.i("kingsukmajumder",SaveUserData.data_total.toString());
         if (!preventPickup) {
+            SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+            String name = prefs.getString("name", "");
+            String email = prefs.getString("email", "");
+            String personalPhone = prefs.getString("personal_phone", "");
+            SaveUserData.data_total.put("email", email);
+            SaveUserData.data_total.put("name", name);
+            SaveUserData.data_total.put("personal_phone", personalPhone);
+            SaveUserData.data_total.put("spcl_instructions", etSpecialInstruction.getText().toString());
+            SaveUserData.data_total.put("driving_instructions", etDrivingInstruction.getText().toString());
+            Log.i("SAVED_USER_DATA", SaveUserData.data_total.toString());
+            registerUser7.register(SaveUserData.data_total, routeUpdateLastPickupAddress);
+
             loadingPlaceOrder = ProgressDialog.show(PickUpOptional.this, "", "Placing order", true, false);
             registerUser.register(SaveUserData.data_total, route);
         }
@@ -326,6 +345,23 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
                     Intent intent = new Intent(getApplicationContext(), Splash.class);
                     startActivity(intent);
                 }
+            } else if (jsonObject.getInt("status_code") == 200) {
+                JSONObject response = jsonObject.getJSONObject("response");
+                String userEmail = response.getString("email");
+                JSONObject userDetails = response.getJSONObject("user_details");
+                String userName = userDetails.getString("name");
+                String userPersonalPhone = userDetails.getString("personal_ph");
+                String userSpecialInstruction = userDetails.getString("spcl_instructions");
+                String userDrivingInstruction = userDetails.getString("driving_instructions");
+                SharedPreferences sharedPreferences = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+                sharedPreferencesEditor.putString("name", userName);
+                sharedPreferencesEditor.putString("email", userEmail);
+                sharedPreferencesEditor.putString("personal_phone", userPersonalPhone);
+                sharedPreferencesEditor.putString("spcl_instructions", userSpecialInstruction);
+                sharedPreferencesEditor.putString("driving_instructions", userDrivingInstruction);
+
+                sharedPreferencesEditor.apply();
             } else {
                 preventPickup = false;
                 Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
@@ -334,6 +370,16 @@ public class PickUpOptional extends AppCompatActivity implements View.OnClickLis
         {
             //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
             Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
+    }
+
+    @Override
+    public void processFinish7(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.i("UPDATE_ADDRESS", jsonObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

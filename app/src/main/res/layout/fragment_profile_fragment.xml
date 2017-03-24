@@ -148,7 +148,7 @@
                     android:layout_width="261dp"
                     android:layout_height="wrap_content"
                     android:textColorHint="#1b193b"
-                    android:hint="@string/maiil_email_com"
+                    android:hint="@string/enter_email_here"
                     android:textColor="#181737"
                     android:background="#0000"
                     android:padding="16dp"

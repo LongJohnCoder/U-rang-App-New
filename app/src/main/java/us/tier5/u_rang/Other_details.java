@@ -29,6 +29,7 @@ import com.cooltechworks.creditcarddesign.CreditCardUtils;
 import com.facebook.login.LoginManager;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -46,15 +47,17 @@ import HelperClasses.AsyncResponse3;
 import HelperClasses.AsyncResponse4;
 import HelperClasses.AsyncResponse5;
 import HelperClasses.AsyncResponse6;
+import HelperClasses.AsyncResponse7;
 import HelperClasses.RegisterUser;
 import HelperClasses.RegisterUser2;
 import HelperClasses.RegisterUser3;
 import HelperClasses.RegisterUser4;
 import HelperClasses.RegisterUser5;
 import HelperClasses.RegisterUser6;
+import HelperClasses.RegisterUser7;
 import Others.SaveUserData;
 
-public class Other_details extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener,TimePickerDialog.OnTimeSetListener,AdapterView.OnItemSelectedListener,View.OnClickListener, AsyncResponse.Response, AsyncResponse2.Response2 , AsyncResponse3.Response3, AsyncResponse4.Response4, AsyncResponse5.Response5, AsyncResponse6.Response6{
+public class Other_details extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener,TimePickerDialog.OnTimeSetListener,AdapterView.OnItemSelectedListener,View.OnClickListener, AsyncResponse.Response, AsyncResponse2.Response2 , AsyncResponse3.Response3, AsyncResponse4.Response4, AsyncResponse5.Response5, AsyncResponse6.Response6, AsyncResponse7.Response7{
 
     boolean preventPickup = false;
     //page variable
@@ -109,6 +112,9 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
     String routeProfileDetails = "/V1/getProgileDetails";
     RegisterUser6 registerUser6 = new RegisterUser6("POST");
 
+    String routeUpdateLastPickupAddress = "/V1/updateProfileAddress";
+    RegisterUser7 registerUser7 = new RegisterUser7("POST");
+
     //timer formatter
     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a");
     int First24Hour;
@@ -145,6 +151,7 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         registerUser4.delegate = this;
         registerUser5.delegate = this;
         registerUser6.delegate = this;
+        registerUser7.delegate = this;
 
 
         //user data variable initialization
@@ -221,6 +228,8 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         SaveUserData.data_total.put("pay_method","1");
         SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
         int user_id = prefs.getInt("user_id", 0);
+        String name = prefs.getString("name", "");
+        String email = prefs.getString("email", "");
 
         data.put("user_id",Integer.toString(user_id));
         registerUser6.register(data, routeProfileDetails);
@@ -765,6 +774,16 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                             if (!preventPickup) {
                                 loadingPostingOrder = ProgressDialog.show(Other_details.this, "", "Placing order", true, false);
                                 registerUser.register(SaveUserData.data_total, route);
+
+                                SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+                                int user_id = prefs.getInt("user_id", 0);
+                                String name = prefs.getString("name", "");
+                                String email = prefs.getString("email", "");
+                                String personalPhone = prefs.getString("personal_phone", "");
+                                SaveUserData.data_total.put("email", email);
+                                SaveUserData.data_total.put("name", name);
+                                SaveUserData.data_total.put("personal_phone", personalPhone);
+                                registerUser7.register(SaveUserData.data_total, routeUpdateLastPickupAddress);
                             }
                         } else {
                             final int GET_NEW_CARD = 2;
@@ -775,6 +794,16 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                     } else {
                         loadingPostingOrder = ProgressDialog.show(Other_details.this, "", "Placing order", true, false);
                         registerUser.register(SaveUserData.data_total, route);
+
+                        SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+                        int user_id = prefs.getInt("user_id", 0);
+                        String name = prefs.getString("name", "");
+                        String email = prefs.getString("email", "");
+                        String personalPhone = prefs.getString("personal_phone", "");
+                        SaveUserData.data_total.put("email", email);
+                        SaveUserData.data_total.put("name", name);
+                        SaveUserData.data_total.put("personal_phone", personalPhone);
+                        registerUser7.register(SaveUserData.data_total, routeUpdateLastPickupAddress);
                     }
 
                 }
@@ -1168,6 +1197,19 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                     Intent intent = new Intent(getApplicationContext(), Splash.class);
                     startActivity(intent);
                 }
+            } else if (jsonObject.getInt("status_code") == 200) {
+                JSONObject response = jsonObject.getJSONObject("response");
+                String userEmail = response.getString("email");
+                JSONObject userDetails = response.getJSONObject("user_details");
+                String userName = userDetails.getString("name");
+                String userPersonalPhone = userDetails.getString("personal_ph");
+                SharedPreferences sharedPreferences = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+                sharedPreferencesEditor.putString("name", userName);
+                sharedPreferencesEditor.putString("email", userEmail);
+                sharedPreferencesEditor.putString("personal_phone", userPersonalPhone);
+
+                sharedPreferencesEditor.apply();
             } else {
                 preventPickup = false;
                 Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
@@ -1176,6 +1218,16 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
         {
             //Toast.makeText(getContext(),"Error in fetching order history!",Toast.LENGTH_SHORT).show();
             Log.i("kingsukmajumder","error in profile"+e.toString());
+        }
+    }
+
+    @Override
+    public void processFinish7(String output) {
+        try {
+            JSONObject jsonObject = new JSONObject(output);
+            Log.i("UPDATE_ADDRESS", jsonObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

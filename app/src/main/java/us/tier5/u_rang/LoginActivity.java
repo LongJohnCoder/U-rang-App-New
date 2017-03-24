@@ -92,11 +92,11 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
     Animation pushUpIn;
 
     TextView edt;
-/*    String smsVerificationCode="";
+    String smsVerificationCode="";
 
     RegisterSms registerSms = new RegisterSms("POST");
     HashMap<String,String> dataSms = new HashMap<>();
-    String routeSms = "https://www.textinbulk.com/app/api/send/ND";*/
+    String routeSms = "https://www.textinbulk.com/app/api/send/ND";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +117,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
                 .requestEmail()
                 .build();
 
-        Log.i("GSO", String.valueOf(gso));
         // Build a GoogleApiClient with access to the Google Sign-In API and the
 // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -137,6 +136,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             }
         });
 
+
         //checking if the user already logged in or not
         SharedPreferences prefs = getSharedPreferences("U-rang", MODE_PRIVATE);
         int restoredText = prefs.getInt("user_id", 0);
@@ -149,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
 
 
         registerUser.delegate = this;
-        //registerSms.delegate = this;
+        registerSms.delegate = this;
 
         email = (TextView) findViewById(R.id.email);
         pass = (TextView) findViewById(R.id.pass);
@@ -328,13 +328,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             data.put("social_id",acct.getId());
             data.put("social_network_name","google");
 
-            //createSmsPopup();
+            createSmsPopup();
 
-            mGifLoadingView = new GifLoadingView();
+            /*mGifLoadingView = new GifLoadingView();
             mGifLoadingView.setImageResource(R.drawable.loading_3);
             mGifLoadingView.show(getFragmentManager(), "Loading");
             mGifLoadingView.setBlurredActionBar(true);
-            registerUser.register(data,socialLoginRoute);
+            registerUser.register(data,socialLoginRoute);*/
 
         } else {
                 Toast.makeText(getApplicationContext(),"Problem occured in google sign in",Toast.LENGTH_SHORT).show();
@@ -384,6 +384,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             {
                 Snackbar.make(this.findViewById(android.R.id.content), jsonObject.getString("message"), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -417,13 +418,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             data.put("social_id",social_id);
             data.put("social_network_name",social_network_name);
 
-            //createSmsPopup();
+            createSmsPopup();
 
-            mGifLoadingView = new GifLoadingView();
+            /*mGifLoadingView = new GifLoadingView();
             mGifLoadingView.setImageResource(R.drawable.loading_3);
             mGifLoadingView.show(getFragmentManager(), "Loading");
             mGifLoadingView.setBlurredActionBar(true);
-            registerUser.register(data,socialLoginRoute);
+            registerUser.register(data,socialLoginRoute);*/
         }
         catch (Exception e)
         {
@@ -456,7 +457,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
         showPageLoadAnimations();
     }
 
-    /*public void createSmsPopup()
+    public void createSmsPopup()
     {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -485,12 +486,12 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
                     if(!edt.getText().toString().equals(""))
                     {
                         data.put("personal_phone",edt.getText().toString());
-                        //smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
-                        //Log.i("kingsukmajumder","sms verification code is "+smsVerificationCode);
-                        //dataSms.put("to",edt.getText().toString());
-                        //dataSms.put("body",smsVerificationCode);
-                        //registerSms.register(dataSms,routeSms);
-                        //createSmsPopupForOtp();
+                        smsVerificationCode=String.valueOf((int)(Math.random()*9000)+1000);
+                        Log.i("kingsukmajumder","sms verification code is "+smsVerificationCode);
+                        dataSms.put("to",edt.getText().toString());
+                        dataSms.put("body",smsVerificationCode);
+                        registerSms.register(dataSms,routeSms);
+                        createSmsPopupForOtp();
                     }
                     else
                     {
@@ -504,14 +505,14 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
 
         AlertDialog b = dialogBuilder.create();
         b.show();
-    }*/
+    }
 
     @Override
     public void processFinishSms(String output) {
         Log.i("kingsukmajumder",output);
     }
 
-    /*public void createSmsPopupForOtp()
+    public void createSmsPopupForOtp()
     {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -555,5 +556,5 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
 
         AlertDialog b = dialogBuilder.create();
         b.show();
-    }*/
+    }
 }
