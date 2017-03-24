@@ -328,13 +328,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             data.put("social_id",acct.getId());
             data.put("social_network_name","google");
 
-            createSmsPopup();
+            //createSmsPopup();
 
-            /*mGifLoadingView = new GifLoadingView();
+            mGifLoadingView = new GifLoadingView();
             mGifLoadingView.setImageResource(R.drawable.loading_3);
             mGifLoadingView.show(getFragmentManager(), "Loading");
             mGifLoadingView.setBlurredActionBar(true);
-            registerUser.register(data,socialLoginRoute);*/
+            registerUser.register(data,socialLoginRoute);
 
         } else {
                 Toast.makeText(getApplicationContext(),"Problem occured in google sign in",Toast.LENGTH_SHORT).show();
@@ -418,13 +418,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             data.put("social_id",social_id);
             data.put("social_network_name",social_network_name);
 
-            createSmsPopup();
+            //createSmsPopup();
 
-            /*mGifLoadingView = new GifLoadingView();
+            mGifLoadingView = new GifLoadingView();
             mGifLoadingView.setImageResource(R.drawable.loading_3);
             mGifLoadingView.show(getFragmentManager(), "Loading");
             mGifLoadingView.setBlurredActionBar(true);
-            registerUser.register(data,socialLoginRoute);*/
+            registerUser.register(data,socialLoginRoute);
         }
         catch (Exception e)
         {
@@ -457,7 +457,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
         showPageLoadAnimations();
     }
 
-    public void createSmsPopup()
+    /*public void createSmsPopup()
     {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -505,14 +505,14 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
 
         AlertDialog b = dialogBuilder.create();
         b.show();
-    }
+    }*/
 
     @Override
     public void processFinishSms(String output) {
         Log.i("kingsukmajumder",output);
     }
 
-    public void createSmsPopupForOtp()
+    /*public void createSmsPopupForOtp()
     {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -556,5 +556,5 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
 
         AlertDialog b = dialogBuilder.create();
         b.show();
-    }
+    }*/
 }
