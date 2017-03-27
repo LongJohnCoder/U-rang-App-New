@@ -367,6 +367,16 @@ public class PriceList_fragment extends Fragment implements AsyncResponse.Respon
                     Intent intent = new Intent(getContext(), Splash.class);
                     startActivity(intent);
                 }
+            } else if (jsonObject.getInt("status_code") == 400) {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                editor.putBoolean("is_social_registered", false);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getContext(), Splash.class);
+                    startActivity(intent);
+                }
             } else {
                 Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
             }

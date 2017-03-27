@@ -59,7 +59,8 @@ import Others.SaveUserData;
 
 public class Other_details extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener,TimePickerDialog.OnTimeSetListener,AdapterView.OnItemSelectedListener,View.OnClickListener, AsyncResponse.Response, AsyncResponse2.Response2 , AsyncResponse3.Response3, AsyncResponse4.Response4, AsyncResponse5.Response5, AsyncResponse6.Response6, AsyncResponse7.Response7{
 
-    boolean preventPickup = false;
+    // Flag is set to prevent pickUp service
+    boolean preventPickup = true;
     //page variable
     LinearLayout PickUpTimeLL,ReturnPickUpTimeLL;
     Switch swDoorman;
@@ -751,68 +752,7 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
     @Override
     public void onClick(View v) {
         registerUser6.register(data, routeProfileDetails);
-        if (!preventPickup) {
-            if (!couponString.equals("")) {
-                SaveUserData.data_total.put("coupon", couponString);
-            }
-            SaveUserData.data_total.put("time_frame_start", startTimeFrame);
-            SaveUserData.data_total.put("time_frame_end", endTimeFrame);
-            SaveUserData.data_total.put("return_time_frame_end", returnEndTimeFrame);
-            SaveUserData.data_total.put("return_time_frame_start", returnStartTimeFrame);
-            Log.i("kingsukmajumder", SaveUserData.data_total.toString());
-            if (!SaveUserData.data_total.get("pay_method").equals("")) {
-                if (endTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
-                    Toast.makeText(getApplicationContext(), "You have to select a end time frame!", Toast.LENGTH_SHORT).show();
-                } else if (returnEndTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
-                    Toast.makeText(getApplicationContext(), "You have to select a Return end time frame!", Toast.LENGTH_SHORT).show();
-                } else if (returnStartTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
-                    Toast.makeText(getApplicationContext(), "You have to select a Return Start time frame!", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (SaveUserData.data_total.get("pay_method").equals("1")) {
-                        if (cardDetailsareThere) {
-                            Log.i("kingsukmajumder", SaveUserData.data_total.toString());
-                            if (!preventPickup) {
-                                loadingPostingOrder = ProgressDialog.show(Other_details.this, "", "Placing order", true, false);
-                                registerUser.register(SaveUserData.data_total, route);
-
-                                SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
-                                int user_id = prefs.getInt("user_id", 0);
-                                String name = prefs.getString("name", "");
-                                String email = prefs.getString("email", "");
-                                String personalPhone = prefs.getString("personal_phone", "");
-                                SaveUserData.data_total.put("email", email);
-                                SaveUserData.data_total.put("name", name);
-                                SaveUserData.data_total.put("personal_phone", personalPhone);
-                                registerUser7.register(SaveUserData.data_total, routeUpdateLastPickupAddress);
-                            }
-                        } else {
-                            final int GET_NEW_CARD = 2;
-                            Toast.makeText(this, "Please enter the card details", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(Other_details.this, CardEditActivity.class);
-                            startActivityForResult(intent, GET_NEW_CARD);
-                        }
-                    } else {
-                        loadingPostingOrder = ProgressDialog.show(Other_details.this, "", "Placing order", true, false);
-                        registerUser.register(SaveUserData.data_total, route);
-
-                        SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
-                        int user_id = prefs.getInt("user_id", 0);
-                        String name = prefs.getString("name", "");
-                        String email = prefs.getString("email", "");
-                        String personalPhone = prefs.getString("personal_phone", "");
-                        SaveUserData.data_total.put("email", email);
-                        SaveUserData.data_total.put("name", name);
-                        SaveUserData.data_total.put("personal_phone", personalPhone);
-                        registerUser7.register(SaveUserData.data_total, routeUpdateLastPickupAddress);
-                    }
-
-                }
-
-            } else {
-                Toast.makeText(getApplicationContext(), "Select a payment method!", Toast.LENGTH_SHORT).show();
-            }
-        }
-
+        preventPickup = false; // resetting preventPickup Flag to start pickUp service
     }
 
     @Override
@@ -1188,11 +1128,20 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
             JSONObject jsonObject = new JSONObject(output);
             Log.v("PROFILE_STATUS:", jsonObject.toString());
             if (jsonObject.getInt("status_code") == 301) {
-                preventPickup = true;
                 Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
                 LoginManager.getInstance().logOut();
                 SharedPreferences.Editor editor = getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
                 editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getApplicationContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else if (jsonObject.getInt("status_code") == 400) {
+                Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                editor.putBoolean("is_social_registered", false);
                 if (editor.commit()) {
                     Intent intent = new Intent(getApplicationContext(), Splash.class);
                     startActivity(intent);
@@ -1210,8 +1159,71 @@ public class Other_details extends AppCompatActivity implements CompoundButton.O
                 sharedPreferencesEditor.putString("personal_phone", userPersonalPhone);
 
                 sharedPreferencesEditor.apply();
+
+                // Start pickUp service
+                if (!preventPickup) {
+                    if (!couponString.equals("")) {
+                        SaveUserData.data_total.put("coupon", couponString);
+                    }
+                    SaveUserData.data_total.put("time_frame_start", startTimeFrame);
+                    SaveUserData.data_total.put("time_frame_end", endTimeFrame);
+                    SaveUserData.data_total.put("return_time_frame_end", returnEndTimeFrame);
+                    SaveUserData.data_total.put("return_time_frame_start", returnStartTimeFrame);
+                    Log.i("kingsukmajumder", SaveUserData.data_total.toString());
+                    if (!SaveUserData.data_total.get("pay_method").equals("")) {
+                        if (endTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
+                            Toast.makeText(getApplicationContext(), "You have to select a end time frame!", Toast.LENGTH_SHORT).show();
+                        } else if (returnEndTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
+                            Toast.makeText(getApplicationContext(), "You have to select a Return end time frame!", Toast.LENGTH_SHORT).show();
+                        } else if (returnStartTimeFrame.equals("__:__") && SaveUserData.data_total.get("doorman").equals("0")) {
+                            Toast.makeText(getApplicationContext(), "You have to select a Return Start time frame!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (SaveUserData.data_total.get("pay_method").equals("1")) {
+                                if (cardDetailsareThere) {
+                                    Log.i("kingsukmajumder", SaveUserData.data_total.toString());
+                                    if (!preventPickup) {
+                                        loadingPostingOrder = ProgressDialog.show(Other_details.this, "", "Placing order", true, false);
+                                        registerUser.register(SaveUserData.data_total, route);
+
+                                        SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+                                        int user_id = prefs.getInt("user_id", 0);
+                                        String name = prefs.getString("name", "");
+                                        String email = prefs.getString("email", "");
+                                        String personalPhone = prefs.getString("personal_phone", "");
+                                        SaveUserData.data_total.put("email", email);
+                                        SaveUserData.data_total.put("name", name);
+                                        SaveUserData.data_total.put("personal_phone", personalPhone);
+                                        registerUser7.register(SaveUserData.data_total, routeUpdateLastPickupAddress);
+                                    }
+                                } else {
+                                    final int GET_NEW_CARD = 2;
+                                    Toast.makeText(this, "Please enter the card details", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(Other_details.this, CardEditActivity.class);
+                                    startActivityForResult(intent, GET_NEW_CARD);
+                                }
+                            } else {
+                                loadingPostingOrder = ProgressDialog.show(Other_details.this, "", "Placing order", true, false);
+                                registerUser.register(SaveUserData.data_total, route);
+
+                                SharedPreferences prefs = getSharedPreferences("U-rang", Context.MODE_PRIVATE);
+                                int user_id = prefs.getInt("user_id", 0);
+                                String name = prefs.getString("name", "");
+                                String email = prefs.getString("email", "");
+                                String personalPhone = prefs.getString("personal_phone", "");
+                                SaveUserData.data_total.put("email", email);
+                                SaveUserData.data_total.put("name", name);
+                                SaveUserData.data_total.put("personal_phone", personalPhone);
+                                registerUser7.register(SaveUserData.data_total, routeUpdateLastPickupAddress);
+                            }
+
+                        }
+                        preventPickup = true;
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Select a payment method!", Toast.LENGTH_SHORT).show();
+                    }
+                }
             } else {
-                preventPickup = false;
                 Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e)

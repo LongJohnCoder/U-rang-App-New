@@ -1,24 +1,16 @@
 package us.tier5.u_rang;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,27 +37,31 @@ import com.roger.gifloadinglibrary.GifLoadingView;
 
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import HelperClasses.AsyncResponse;
 import HelperClasses.AsyncResponseSms;
-import HelperClasses.AsyncSmsTracker;
 import HelperClasses.CheckNetwork;
-import HelperClasses.RegisterSms;
 import HelperClasses.RegisterUser;
 
-public class LoginActivity extends AppCompatActivity implements AsyncResponse.Response,View.OnClickListener,GoogleApiClient.OnConnectionFailedListener, AsyncResponseSms.ResponseSms {
+public class LoginActivity extends AppCompatActivity implements AsyncResponse.Response,
+        View.OnClickListener,
+        GoogleApiClient.OnConnectionFailedListener,
+        AsyncResponseSms.ResponseSms {
+
+    boolean isSocialLogin = false;
+    boolean isSocialRegistered = false;
+
     TextView signUp;
     Button siginInButton;
-    HashMap<String, String> data = new HashMap<String,String>();
+    HashMap<String, String> data = new HashMap<>();
     TextView email;
     TextView pass;
     String route = "/V1/login";
     String socialLoginRoute = "/V1/social-login";
     int user_id;
-    ProgressDialog loading;
+    //ProgressDialog loading;
     LoginButton loginButton;
     SignInButton signInButton;
     CallbackManager callbackManager;
@@ -91,12 +87,12 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
     Animation slideInLeft;
     Animation pushUpIn;
 
-    TextView edt;
+    /*TextView edt;
     String smsVerificationCode="";
 
     RegisterSms registerSms = new RegisterSms("POST");
     HashMap<String,String> dataSms = new HashMap<>();
-    String routeSms = "https://www.textinbulk.com/app/api/send/ND";
+    String routeSms = "https://www.textinbulk.com/app/api/send/ND";*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +104,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
         setContentView(R.layout.activit_login);
         Log.i("kingsukmajumder","here");
 
-
-
-
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -118,7 +111,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
                 .build();
 
         // Build a GoogleApiClient with access to the Google Sign-In API and the
-// options specified by gso.
+        // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -136,10 +129,10 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             }
         });
 
-
         //checking if the user already logged in or not
         SharedPreferences prefs = getSharedPreferences("U-rang", MODE_PRIVATE);
         int restoredText = prefs.getInt("user_id", 0);
+        isSocialRegistered = prefs.getBoolean("is_social_registered", false);
 
         if (restoredText != 0)
         {
@@ -147,16 +140,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             startActivity(i);
         }
 
-
         registerUser.delegate = this;
-        registerSms.delegate = this;
+        //registerSms.delegate = this;
 
         email = (TextView) findViewById(R.id.email);
         pass = (TextView) findViewById(R.id.pass);
 
-
         signUp = (TextView) findViewById(R.id.signUp);
-
 
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,17 +193,14 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
         //facebook login start
         loginButton = (LoginButton) findViewById(R.id.login_button_facebook);
 
-
         callbackManager = CallbackManager.Factory.create();
 
         //loginButton.setOnClickListener(this);
-
-
         //Log.i("kingsukmajumder","Access token : "+AccessToken.getCurrentAccessToken().toString());
 
         //Auto-login
         //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-        loginButton.setReadPermissions(Arrays.asList("email"));
+        loginButton.setReadPermissions(Collections.singletonList("email"));
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -262,13 +249,11 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             }
         });
 
-
         //initialization for anims
         LLEmailAddress = (LinearLayout) findViewById(R.id.LLEmailAddress);
         LLPassword = (LinearLayout) findViewById(R.id.LLPassword);
         LLForgotPassword = (LinearLayout) findViewById(R.id.LLForgotPassword);
         FLLoginButton = (FrameLayout) findViewById(R.id.FLLoginButton);
-
 
         //animation initialization
         slideInRight = AnimationUtils.loadAnimation(getApplicationContext(),
@@ -293,7 +278,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
         // An unresolvable error has occurred and a connection to Google APIs
         // could not be established. Display an error message, or handle
         // the failure silently
@@ -322,6 +307,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
 
             //Log.d("kingsukmajumder", "handleSignInResult:" + acct.getEmail());
 
+            assert acct != null;
             data.put("email",acct.getEmail());
             data.put("password","google");
             data.put("name",acct.getDisplayName());
@@ -334,6 +320,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             mGifLoadingView.setImageResource(R.drawable.loading_3);
             mGifLoadingView.show(getFragmentManager(), "Loading");
             mGifLoadingView.setBlurredActionBar(true);
+            isSocialLogin = true;
             registerUser.register(data,socialLoginRoute);
 
         } else {
@@ -366,12 +353,28 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
                 }*/
                 SharedPreferences.Editor editor = getSharedPreferences("U-rang", MODE_PRIVATE).edit();
                 editor.putInt("user_id", user_id);
-                if(editor.commit())
-                {
-                    Toast.makeText(getApplicationContext(),jsonObject.getString("message"),Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this,Dashboard.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);               }
+                if(editor.commit()) {
+                    Toast.makeText(getApplicationContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                    if (isSocialLogin) {
+                        if (isSocialRegistered) {
+                            Intent intent = new Intent(LoginActivity.this, Dashboard.class);
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                        } else {
+                            editor.putBoolean("is_social_registered", true);
+                            editor.apply();
+
+                            Intent intent = new Intent(LoginActivity.this, DashboardNew.class);
+                            intent.putExtra("classname", "FragmentClasses.Profile_fragment");
+                            startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                        }
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, Dashboard.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                }
                 else
                 {
                     Toast.makeText(getApplication(),"Some problem occoured, You may have to login again when you launch the app!",Toast.LENGTH_LONG).show();
@@ -424,6 +427,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse.Re
             mGifLoadingView.setImageResource(R.drawable.loading_3);
             mGifLoadingView.show(getFragmentManager(), "Loading");
             mGifLoadingView.setBlurredActionBar(true);
+            isSocialLogin = true;
             registerUser.register(data,socialLoginRoute);
         }
         catch (Exception e)

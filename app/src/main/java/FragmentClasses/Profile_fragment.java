@@ -284,7 +284,7 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
                 if (!userDetails.getString("name").equals("")) {
                     name.setText(userDetails.getString("name"));
                 }
-                if(!userDetails.getString("personal_ph").equals("null"))
+                if(!userDetails.getString("personal_ph").equals("null") || !userDetails.getString("personal_ph").equals(""))
                 {
                     personal_ph.setText(userDetails.getString("personal_ph"));
                     Log.i("kingsukmajumder",userDetails.getString("personal_ph"));
@@ -303,9 +303,12 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
                 {
                     officePhone.setText(Integer.toString(userDetails.getInt("off_phone")));
                 }
-
-                specialInstruction.setText(userDetails.getString("spcl_instructions"));
-                drivingInstruction.setText(userDetails.getString("driving_instructions"));
+                if (!userDetails.getString("spcl_instructions").equals("")) {
+                    specialInstruction.setText(userDetails.getString("spcl_instructions"));
+                }
+                if (!userDetails.getString("driving_instructions").equals("")) {
+                    drivingInstruction.setText(userDetails.getString("driving_instructions"));
+                }
 
                 try
                 {
@@ -366,6 +369,16 @@ public class Profile_fragment extends Fragment implements AsyncResponse.Response
                 LoginManager.getInstance().logOut();
                 SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
                 editor.putInt("user_id", 0);
+                if (editor.commit()) {
+                    Intent intent = new Intent(getContext(), Splash.class);
+                    startActivity(intent);
+                }
+            } else if (jsonObject.getInt("status_code") == 400) {
+                Toast.makeText(getContext(), jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                LoginManager.getInstance().logOut();
+                SharedPreferences.Editor editor = this.getActivity().getSharedPreferences("U-rang", Context.MODE_PRIVATE).edit();
+                editor.putInt("user_id", 0);
+                editor.putBoolean("is_social_registered", false);
                 if (editor.commit()) {
                     Intent intent = new Intent(getContext(), Splash.class);
                     startActivity(intent);
